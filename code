@@ -4,550 +4,604 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NexChat</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #080c10;
-    --surface: #0d1117;
-    --surface2: #161b22;
-    --surface3: #1f2937;
-    --border: #21262d;
-    --accent: #00d9ff;
-    --accent2: #7c3aed;
-    --accent-glow: rgba(0,217,255,0.15);
-    --red: #f85149;
-    --green: #3fb950;
-    --yellow: #e3b341;
-    --text: #e6edf3;
-    --text2: #8b949e;
-    --text3: #484f58;
-    --admin: #ff6b35;
+    --bg: #313338;
+    --bg-dark: #1e1f22;
+    --bg-darker: #111214;
+    --surface: #2b2d31;
+    --surface2: #232428;
+    --surface3: #383a40;
+    --border: #3f4147;
+    --accent: #5865f2;
+    --accent-hover: #4752c4;
+    --accent-glow: rgba(88,101,242,0.15);
+    --red: #ed4245;
+    --green: #57f287;
+    --yellow: #fee75c;
+    --orange: #f0b232;
+    --text: #f2f3f5;
+    --text2: #b5bac1;
+    --text3: #6d6f78;
+    --text-muted: #949ba4;
+    --admin: #5865f2;
+    --server-bar: #1e1f22;
+    --channel-hover: rgba(78,80,88,0.6);
+    --channel-active: rgba(78,80,88,0.9);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow:hidden; }
+  body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow:hidden; }
 
-  /* ─── NOISE OVERLAY ─── */
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    opacity:0.4;
-  }
-
-  /* ─── VIEWS ─── */
   .view { position:fixed; inset:0; display:none; z-index:1; }
   .view.active { display:flex; }
 
-  /* ══════════════════════════════════════════
-     AUTH VIEW
-  ══════════════════════════════════════════ */
+  /* ====== AUTH VIEW ====== */
   #auth-view {
     align-items:center; justify-content:center;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,217,255,0.07) 0%, transparent 70%),
-                radial-gradient(ellipse 60% 50% at 80% 100%, rgba(124,58,237,0.06) 0%, transparent 70%),
-                var(--bg);
+    background: var(--bg-dark);
   }
   .auth-card {
-    width: 420px; background:var(--surface); border:1px solid var(--border);
-    border-radius:16px; padding:40px;
-    box-shadow: 0 0 0 1px rgba(0,217,255,0.04), 0 40px 80px rgba(0,0,0,0.6);
-    animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1);
+    width: 480px; background:var(--bg); border-radius:4px; padding:32px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease;
   }
-  @keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
-  .logo { font-family:'Space Mono',monospace; font-size:28px; font-weight:700; color:var(--accent); letter-spacing:-1px; margin-bottom:4px; }
-  .logo span { color:var(--text2); }
-  .auth-subtitle { font-size:13px; color:var(--text2); margin-bottom:32px; }
-  .tab-row { display:flex; gap:0; background:var(--surface2); border-radius:10px; padding:4px; margin-bottom:28px; }
+  @keyframes fadeIn { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
+  .logo { font-size:24px; font-weight:700; color:var(--text); text-align:center; margin-bottom:8px; }
+  .auth-subtitle { font-size:14px; color:var(--text2); margin-bottom:20px; text-align:center; }
+  .tab-row { display:flex; gap:0; margin-bottom:20px; }
   .tab-btn {
-    flex:1; padding:8px; border:none; background:transparent; color:var(--text2);
-    font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer;
-    border-radius:7px; transition:all 0.2s;
+    flex:1; padding:10px; border:none; background:transparent; color:var(--text2);
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:500; cursor:pointer;
+    border-bottom:2px solid transparent; transition:all 0.2s;
   }
-  .tab-btn.active { background:var(--surface3); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,0.4); }
-  .field { margin-bottom:16px; }
-  .field label { display:block; font-size:12px; font-weight:600; color:var(--text2); margin-bottom:6px; letter-spacing:0.5px; text-transform:uppercase; }
+  .tab-btn.active { border-bottom-color:var(--accent); color:var(--text); }
+  .tab-btn:hover { color:var(--text); }
+  .field { margin-bottom:20px; }
+  .field label { display:block; font-size:12px; font-weight:700; color:var(--text2); margin-bottom:8px; letter-spacing:0.02em; text-transform:uppercase; }
   .field input {
-    width:100%; padding:11px 14px; background:var(--surface2); border:1px solid var(--border);
-    border-radius:8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px;
-    outline:none; transition:border-color 0.2s, box-shadow 0.2s;
+    width:100%; padding:10px; background:var(--bg-dark); border:none;
+    border-radius:3px; color:var(--text); font-family:'Inter',sans-serif; font-size:16px;
+    outline:none; transition:box-shadow 0.2s; height:40px;
   }
-  .field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  .field input:focus { box-shadow:0 0 0 2px var(--accent); }
   .field input::placeholder { color:var(--text3); }
   .btn-primary {
-    width:100%; padding:12px; background:var(--accent); color:#000;
-    border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px;
-    font-weight:700; cursor:pointer; transition:all 0.2s; letter-spacing:0.2px;
+    width:100%; padding:10px 16px; background:var(--accent); color:#fff;
+    border:none; border-radius:3px; font-family:'Inter',sans-serif; font-size:14px;
+    font-weight:600; cursor:pointer; transition:background 0.2s; height:44px;
     margin-top:4px;
   }
-  .btn-primary:hover { filter:brightness(1.1); transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,217,255,0.3); }
-  .btn-primary:active { transform:translateY(0); }
-  .auth-error { color:var(--red); font-size:13px; margin-top:12px; padding:10px 12px; background:rgba(248,81,73,0.1); border-radius:6px; border:1px solid rgba(248,81,73,0.2); display:none; }
+  .btn-primary:hover { background:var(--accent-hover); }
+  .auth-error { color:var(--red); font-size:14px; margin-top:8px; display:none; }
+  .auth-footer { margin-top:8px; font-size:14px; color:var(--text-muted); }
+  .auth-footer a { color:var(--accent); cursor:pointer; text-decoration:none; }
+  .auth-footer a:hover { text-decoration:underline; }
   .admin-hint { margin-top:20px; padding-top:20px; border-top:1px solid var(--border); text-align:center; }
   .admin-link { font-size:12px; color:var(--text3); cursor:pointer; transition:color 0.2s; }
-  .admin-link:hover { color:var(--admin); }
+  .admin-link:hover { color:var(--accent); }
 
-  /* ══════════════════════════════════════════
-     ADMIN AUTH VIEW
-  ══════════════════════════════════════════ */
+  /* ====== ADMIN AUTH VIEW ====== */
   #admin-auth-view {
     align-items:center; justify-content:center;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,107,53,0.07) 0%, transparent 70%), var(--bg);
+    background: var(--bg-dark);
   }
   .admin-auth-card {
-    width:440px; background:var(--surface); border:1px solid rgba(255,107,53,0.3);
-    border-radius:16px; padding:40px;
-    box-shadow: 0 0 0 1px rgba(255,107,53,0.05), 0 40px 80px rgba(0,0,0,0.7);
-    animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1);
+    width:480px; background:var(--bg); border-radius:4px; padding:32px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease;
   }
-  .admin-logo { font-family:'Space Mono',monospace; font-size:24px; color:var(--admin); margin-bottom:4px; }
-  .security-steps { display:flex; gap:8px; margin-bottom:28px; margin-top:20px; }
-  .sec-step {
-    flex:1; height:3px; border-radius:2px; background:var(--surface3); position:relative;
-    transition:background 0.3s;
-  }
-  .sec-step.done { background:var(--admin); }
-  .sec-step.active { background:linear-gradient(90deg,var(--admin),rgba(255,107,53,0.3)); }
+  .admin-logo { font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; text-align:center; }
+  .security-steps { display:flex; gap:4px; margin-bottom:20px; margin-top:16px; }
+  .sec-step { flex:1; height:4px; border-radius:2px; background:var(--surface3); transition:background 0.3s; }
+  .sec-step.done { background:var(--accent); }
+  .sec-step.active { background:var(--accent); opacity:0.6; }
   .step-panel { display:none; }
   .step-panel.active { display:block; }
-  .step-label { font-size:12px; color:var(--admin); font-family:'Space Mono',monospace; margin-bottom:16px; letter-spacing:1px; }
-  .back-btn { background:none; border:none; color:var(--text2); cursor:pointer; font-size:13px; margin-top:16px; transition:color 0.2s; }
+  .step-label { font-size:12px; color:var(--text-muted); font-weight:700; margin-bottom:16px; letter-spacing:0.02em; text-transform:uppercase; }
+  .back-btn { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:14px; margin-top:16px; transition:color 0.2s; }
   .back-btn:hover { color:var(--text); }
   .btn-admin {
-    width:100%; padding:12px; background:var(--admin); color:#fff;
-    border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px;
-    font-weight:700; cursor:pointer; transition:all 0.2s; margin-top:4px;
+    width:100%; padding:10px 16px; background:var(--accent); color:#fff;
+    border:none; border-radius:3px; font-family:'Inter',sans-serif; font-size:14px;
+    font-weight:600; cursor:pointer; transition:background 0.2s; margin-top:4px; height:44px;
   }
-  .btn-admin:hover { filter:brightness(1.1); transform:translateY(-1px); box-shadow:0 6px 20px rgba(255,107,53,0.3); }
-  .admin-err { color:var(--red); font-size:13px; margin-top:10px; display:none; }
+  .btn-admin:hover { background:var(--accent-hover); }
+  .admin-err { color:var(--red); font-size:14px; margin-top:8px; display:none; }
 
-  /* ══════════════════════════════════════════
-     CHAT VIEW
-  ══════════════════════════════════════════ */
+  /* ====== CHAT VIEW ====== */
   #chat-view { flex-direction:row; }
-  
-  /* Sidebar */
+  .server-list {
+    width:72px; min-width:72px; background:var(--server-bar);
+    display:flex; flex-direction:column; align-items:center;
+    padding:12px 0; gap:8px; height:100vh; overflow-y:auto;
+  }
+  .server-list::-webkit-scrollbar { display:none; }
+  .server-icon {
+    width:48px; height:48px; border-radius:50%; background:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:700; color:var(--text); cursor:pointer;
+    transition:border-radius 0.2s, background 0.2s;
+  }
+  .server-icon:hover, .server-icon.active { border-radius:16px; background:var(--accent); color:#fff; }
+  .server-icon.home { background:var(--accent); color:#fff; border-radius:16px; }
+  .server-divider { width:32px; height:2px; background:var(--border); border-radius:1px; }
+  .server-icon.add { background:var(--bg); color:var(--green); font-size:24px; }
+  .server-icon.add:hover { background:var(--green); color:#fff; border-radius:16px; }
+
   .sidebar {
-    width:260px; min-width:260px; background:var(--surface); border-right:1px solid var(--border);
+    width:240px; min-width:240px; background:var(--surface);
     display:flex; flex-direction:column; height:100vh;
   }
-  .sidebar-header { padding:20px 16px 16px; border-bottom:1px solid var(--border); }
-  .sidebar-logo { font-family:'Space Mono',monospace; font-size:18px; color:var(--accent); }
-  .user-pill {
-    display:flex; align-items:center; gap:10px; margin-top:14px; padding:10px 12px;
-    background:var(--surface2); border-radius:10px;
+  .sidebar-header {
+    padding:0 16px; height:48px; display:flex; align-items:center;
+    border-bottom:1px solid var(--bg-dark); font-size:16px; font-weight:600;
+    box-shadow:0 1px 0 rgba(0,0,0,0.2);
+  }
+  .rooms-section { flex:1; overflow-y:auto; padding:16px 8px 8px; }
+  .rooms-section::-webkit-scrollbar { width:4px; }
+  .rooms-section::-webkit-scrollbar-track { background:transparent; }
+  .rooms-section::-webkit-scrollbar-thumb { background:var(--bg-dark); border-radius:2px; }
+  .section-title {
+    font-size:12px; font-weight:700; color:var(--text3); letter-spacing:0.02em;
+    text-transform:uppercase; padding:0 8px; margin-bottom:4px; margin-top:16px;
+  }
+  .section-title:first-child { margin-top:0; }
+  .room-btn {
+    width:100%; padding:6px 8px; background:none; border:none; border-radius:4px;
+    color:var(--text3); font-family:'Inter',sans-serif; font-size:15px; cursor:pointer;
+    display:flex; align-items:center; gap:6px; transition:all 0.1s; text-align:left;
+    margin-bottom:1px; height:34px;
+  }
+  .room-btn:hover { background:var(--channel-hover); color:var(--text2); }
+  .room-btn.active { background:var(--channel-active); color:var(--text); }
+  .room-hash { font-size:20px; opacity:0.4; font-weight:400; }
+
+  .user-area {
+    padding:0 8px; height:52px; background:var(--surface2);
+    display:flex; align-items:center; gap:8px;
   }
   .avatar {
     width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
     font-size:13px; font-weight:700; flex-shrink:0; position:relative;
   }
   .avatar .online-dot {
-    position:absolute; bottom:0; right:0; width:9px; height:9px;
-    background:var(--green); border-radius:50%; border:2px solid var(--surface2);
+    position:absolute; bottom:-1px; right:-1px; width:10px; height:10px;
+    background:var(--green); border-radius:50%; border:3px solid var(--surface2);
   }
   .user-info { flex:1; min-width:0; }
-  .user-name { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .user-role { font-size:11px; color:var(--text2); }
-  .logout-btn { background:none; border:none; color:var(--text3); cursor:pointer; font-size:16px; transition:color 0.2s; }
-  .logout-btn:hover { color:var(--red); }
-  .rooms-section { flex:1; overflow-y:auto; padding:12px 8px; }
-  .section-title { font-size:11px; font-weight:700; color:var(--text3); letter-spacing:1px; text-transform:uppercase; padding:0 8px; margin-bottom:6px; }
-  .room-btn {
-    width:100%; padding:9px 10px; background:none; border:none; border-radius:8px;
-    color:var(--text2); font-family:'DM Sans',sans-serif; font-size:14px; cursor:pointer;
-    display:flex; align-items:center; gap:10px; transition:all 0.15s; text-align:left;
-    margin-bottom:2px;
+  .user-name { font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .user-tag { font-size:12px; color:var(--text3); }
+  .logout-btn {
+    background:none; border:none; color:var(--text3); cursor:pointer; font-size:18px;
+    transition:color 0.2s; width:32px; height:32px; border-radius:4px;
+    display:flex; align-items:center; justify-content:center;
   }
-  .room-btn:hover { background:var(--surface2); color:var(--text); }
-  .room-btn.active { background:var(--accent-glow); color:var(--accent); }
-  .room-hash { font-family:'Space Mono',monospace; font-size:16px; opacity:0.5; }
-  .online-section { padding:12px 8px; border-top:1px solid var(--border); }
-  .online-list { margin-top:6px; }
-  .online-user { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:6px; }
-  .online-user .ava { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
-  .online-user .oname { font-size:12px; color:var(--text2); }
-  .online-dot2 { width:7px; height:7px; border-radius:50%; background:var(--green); margin-left:auto; flex-shrink:0; }
+  .logout-btn:hover { color:var(--text2); background:var(--surface3); }
 
-  /* Main chat area */
-  .chat-main { flex:1; display:flex; flex-direction:column; height:100vh; min-width:0; }
+  .chat-main { flex:1; display:flex; flex-direction:column; height:100vh; min-width:0; background:var(--bg); }
   .chat-header {
-    padding:16px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center;
-    gap:12px; background:var(--surface); flex-shrink:0;
+    padding:0 16px; height:48px; border-bottom:1px solid var(--bg-dark);
+    display:flex; align-items:center; gap:8px; flex-shrink:0;
+    box-shadow:0 1px 0 rgba(0,0,0,0.2);
   }
+  .chat-header .room-hash { font-size:24px; color:var(--text3); }
   .chat-room-name { font-size:16px; font-weight:600; }
-  .chat-room-desc { font-size:12px; color:var(--text2); margin-left:auto; }
-  .messages-area { flex:1; overflow-y:auto; padding:20px 24px; display:flex; flex-direction:column; gap:2px; }
-  .messages-area::-webkit-scrollbar { width:4px; }
+  .header-divider { width:1px; height:24px; background:var(--border); margin:0 8px; }
+  .chat-room-desc { font-size:14px; color:var(--text3); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .header-icons { display:flex; gap:16px; margin-left:auto; }
+  .header-icon { color:var(--text2); cursor:pointer; font-size:18px; background:none; border:none; }
+  .header-icon:hover { color:var(--text); }
+
+  .messages-area { flex:1; overflow-y:auto; padding:16px 16px 0; display:flex; flex-direction:column; }
+  .messages-area::-webkit-scrollbar { width:8px; }
   .messages-area::-webkit-scrollbar-track { background:transparent; }
-  .messages-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .messages-area::-webkit-scrollbar-thumb { background:var(--bg-dark); border-radius:4px; border:2px solid var(--bg); }
 
-  /* Message */
-  .msg { display:flex; gap:12px; padding:6px 8px; border-radius:8px; transition:background 0.15s; }
-  .msg:hover { background:rgba(255,255,255,0.02); }
-  .msg-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; margin-top:2px; }
+  .msg { display:flex; gap:16px; padding:2px 48px 2px 16px; min-height:28px; position:relative; }
+  .msg:hover { background:rgba(0,0,0,0.06); }
+  .msg.has-header { margin-top:17px; min-height:44px; }
+  .msg-avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; flex-shrink:0; cursor:pointer; }
+  .msg-avatar.hidden-avatar { visibility:hidden; width:40px; }
   .msg-content { flex:1; min-width:0; }
-  .msg-header { display:flex; align-items:baseline; gap:8px; margin-bottom:3px; }
-  .msg-author { font-size:14px; font-weight:600; }
-  .msg-time { font-size:11px; color:var(--text3); }
-  .msg-badge { font-size:10px; padding:1px 6px; border-radius:3px; font-weight:700; letter-spacing:0.5px; }
-  .badge-admin { background:rgba(255,107,53,0.2); color:var(--admin); }
-  .badge-mod { background:rgba(0,217,255,0.15); color:var(--accent); }
-  .msg-text { font-size:14px; color:var(--text); line-height:1.6; word-break:break-word; }
+  .msg-header { display:flex; align-items:baseline; gap:4px; }
+  .msg-author { font-size:16px; font-weight:500; cursor:pointer; }
+  .msg-author:hover { text-decoration:underline; }
+  .msg-time { font-size:12px; color:var(--text3); margin-left:4px; }
+  .msg-time.inline-time { font-size:11px; color:var(--text3); position:absolute; left:0; width:56px; text-align:right; opacity:0; padding-right:8px; top:4px; }
+  .msg:hover .inline-time { opacity:1; }
+  .msg-badge { font-size:10px; padding:1px 4px; border-radius:3px; font-weight:600; margin-left:4px; vertical-align:middle; }
+  .badge-admin { background:var(--accent); color:#fff; }
+  .msg-text { font-size:16px; color:var(--text2); line-height:1.375; word-break:break-word; }
   .msg-text.flagged { color:var(--text3); font-style:italic; }
-  .msg-deleted { font-size:13px; color:var(--text3); font-style:italic; }
-  .msg-flag { font-size:11px; color:var(--yellow); margin-top:2px; }
-  .system-msg { text-align:center; padding:8px; font-size:12px; color:var(--text3); font-style:italic; }
-  .date-divider { display:flex; align-items:center; gap:12px; margin:12px 0; }
-  .date-divider span { font-size:11px; color:var(--text3); white-space:nowrap; }
+  .msg-flag { font-size:12px; color:var(--yellow); margin-top:2px; }
+  .date-divider { display:flex; align-items:center; gap:4px; margin:8px 0; }
+  .date-divider span { font-size:12px; color:var(--text3); white-space:nowrap; font-weight:700; padding:0 4px; }
   .date-divider::before, .date-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .welcome-msg { padding:16px 16px 0; margin-bottom:8px; }
+  .welcome-msg h2 { font-size:32px; font-weight:700; margin-bottom:8px; }
+  .welcome-msg p { color:var(--text2); font-size:14px; }
 
-  /* Input area */
-  .input-area { padding:16px 24px; border-top:1px solid var(--border); background:var(--surface); flex-shrink:0; }
+  .input-area { padding:0 16px 24px; flex-shrink:0; }
   .warning-banner {
-    padding:10px 14px; background:rgba(227,179,65,0.1); border:1px solid rgba(227,179,65,0.3);
-    border-radius:8px; margin-bottom:12px; font-size:13px; color:var(--yellow);
+    padding:8px 12px; background:rgba(254,231,92,0.08);
+    border-radius:4px; margin-bottom:8px; font-size:14px; color:var(--yellow);
     display:none; align-items:center; gap:8px;
   }
   .muted-banner {
-    padding:10px 14px; background:rgba(248,81,73,0.1); border:1px solid rgba(248,81,73,0.3);
-    border-radius:8px; font-size:13px; color:var(--red); display:none; align-items:center; gap:8px;
+    padding:8px 12px; background:rgba(237,66,69,0.08);
+    border-radius:4px; font-size:14px; color:var(--red); display:none; align-items:center; gap:8px;
   }
-  .input-row { display:flex; gap:10px; align-items:center; }
+  .input-wrapper {
+    background:var(--surface3); border-radius:8px; display:flex; align-items:center;
+    padding:0 16px;
+  }
+  .input-icon { color:var(--text3); font-size:20px; cursor:pointer; margin-right:8px; flex-shrink:0; }
+  .input-icon:hover { color:var(--text2); }
   .msg-input {
-    flex:1; padding:12px 16px; background:var(--surface2); border:1px solid var(--border);
-    border-radius:10px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px;
-    outline:none; transition:border-color 0.2s, box-shadow 0.2s; resize:none; height:44px;
-    line-height:20px;
+    flex:1; padding:11px 0; background:transparent; border:none;
+    color:var(--text); font-family:'Inter',sans-serif; font-size:16px;
+    outline:none; resize:none; height:44px; line-height:22px;
   }
-  .msg-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
   .msg-input::placeholder { color:var(--text3); }
-  .send-btn {
-    width:44px; height:44px; border-radius:10px; border:none; background:var(--accent);
-    color:#000; cursor:pointer; display:flex; align-items:center; justify-content:center;
-    font-size:18px; transition:all 0.2s; flex-shrink:0;
-  }
-  .send-btn:hover { filter:brightness(1.1); box-shadow:0 4px 16px rgba(0,217,255,0.3); }
-  .send-btn:disabled { opacity:0.4; cursor:not-allowed; filter:none; box-shadow:none; }
+  .input-actions { display:flex; gap:8px; align-items:center; }
+  .input-action-btn { color:var(--text3); font-size:20px; cursor:pointer; background:none; border:none; }
+  .input-action-btn:hover { color:var(--text2); }
 
-  /* ══════════════════════════════════════════
-     ADMIN PANEL
-  ══════════════════════════════════════════ */
+  .member-list {
+    width:240px; min-width:240px; background:var(--surface);
+    padding:16px 8px; overflow-y:auto; height:100vh;
+  }
+  .member-list::-webkit-scrollbar { width:4px; }
+  .member-list::-webkit-scrollbar-track { background:transparent; }
+  .member-list::-webkit-scrollbar-thumb { background:var(--bg-dark); border-radius:2px; }
+  .member-group-title { font-size:12px; font-weight:700; color:var(--text3); letter-spacing:0.02em; text-transform:uppercase; padding:16px 8px 4px; }
+  .member-item {
+    display:flex; align-items:center; gap:12px; padding:4px 8px; border-radius:4px;
+    cursor:pointer; transition:background 0.1s; margin-bottom:1px;
+  }
+  .member-item:hover { background:var(--channel-hover); }
+  .member-item .m-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; position:relative; }
+  .member-item .m-name { font-size:14px; color:var(--text3); font-weight:500; }
+  .member-item:hover .m-name { color:var(--text2); }
+  .member-item .m-status { position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-radius:50%; border:3px solid var(--surface); }
+  .member-item .m-status.online { background:var(--green); }
+  .member-item .m-status.offline { background:var(--text3); }
+
+  /* ====== ADMIN PANEL ====== */
   #admin-view { flex-direction:row; }
   .admin-sidebar {
-    width:220px; min-width:220px; background:var(--surface); border-right:1px solid rgba(255,107,53,0.2);
+    width:240px; min-width:240px; background:var(--surface);
     display:flex; flex-direction:column; height:100vh;
   }
-  .admin-sidebar-header { padding:20px 16px; border-bottom:1px solid rgba(255,107,53,0.2); }
-  .admin-sidebar-logo { font-family:'Space Mono',monospace; font-size:16px; color:var(--admin); }
-  .admin-sidebar-sub { font-size:11px; color:var(--text2); margin-top:4px; }
-  .admin-nav { flex:1; padding:12px 8px; }
-  .admin-nav-btn {
-    width:100%; padding:10px 12px; background:none; border:none; border-radius:8px;
-    color:var(--text2); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer;
-    display:flex; align-items:center; gap:10px; transition:all 0.15s; text-align:left;
-    margin-bottom:2px;
+  .admin-sidebar-header {
+    padding:0 16px; height:48px; display:flex; align-items:center;
+    border-bottom:1px solid var(--bg-dark); font-weight:600;
+    box-shadow:0 1px 0 rgba(0,0,0,0.2);
   }
-  .admin-nav-btn:hover { background:var(--surface2); color:var(--text); }
-  .admin-nav-btn.active { background:rgba(255,107,53,0.12); color:var(--admin); }
-  .admin-nav-btn .nav-icon { font-size:16px; }
-  .admin-exit { padding:12px 8px; border-top:1px solid var(--border); }
-  .admin-exit-btn { width:100%; padding:10px; background:none; border:1px solid var(--border); border-radius:8px; color:var(--text2); font-size:13px; cursor:pointer; transition:all 0.2s; }
-  .admin-exit-btn:hover { border-color:var(--red); color:var(--red); }
+  .admin-sidebar-logo { font-size:16px; color:var(--text); }
+  .admin-nav { flex:1; padding:8px; overflow-y:auto; }
+  .admin-nav-btn {
+    width:100%; padding:8px 12px; background:none; border:none; border-radius:4px;
+    color:var(--text3); font-family:'Inter',sans-serif; font-size:14px; cursor:pointer;
+    display:flex; align-items:center; gap:8px; transition:all 0.1s; text-align:left;
+    margin-bottom:1px; height:34px;
+  }
+  .admin-nav-btn:hover { background:var(--channel-hover); color:var(--text2); }
+  .admin-nav-btn.active { background:var(--channel-active); color:var(--text); }
+  .admin-nav-btn .nav-icon { font-size:16px; width:20px; text-align:center; }
+  .admin-nav-separator { font-size:12px; font-weight:700; color:var(--text3); letter-spacing:0.02em; text-transform:uppercase; padding:16px 12px 4px; }
+  .admin-exit { padding:8px; border-top:1px solid var(--bg-dark); }
+  .admin-exit-btn {
+    width:100%; padding:8px 12px; background:none; border:none; border-radius:4px;
+    color:var(--text3); font-size:14px; cursor:pointer; transition:all 0.1s;
+    display:flex; align-items:center; gap:8px; font-family:'Inter',sans-serif;
+  }
+  .admin-exit-btn:hover { background:rgba(237,66,69,0.1); color:var(--red); }
 
-  .admin-main { flex:1; overflow-y:auto; padding:28px; height:100vh; }
+  .admin-main { flex:1; overflow-y:auto; padding:40px; height:100vh; max-width:740px; }
+  .admin-main::-webkit-scrollbar { width:8px; }
+  .admin-main::-webkit-scrollbar-track { background:transparent; }
+  .admin-main::-webkit-scrollbar-thumb { background:var(--surface); border-radius:4px; }
   .admin-panel { display:none; }
   .admin-panel.active { display:block; }
-  .admin-title { font-family:'Space Mono',monospace; font-size:22px; color:var(--text); margin-bottom:6px; }
-  .admin-desc { font-size:13px; color:var(--text2); margin-bottom:24px; }
+  .admin-title { font-size:20px; font-weight:600; color:var(--text); margin-bottom:4px; }
+  .admin-desc { font-size:14px; color:var(--text-muted); margin-bottom:24px; }
 
-  /* Stats grid */
-  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
-  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
-  .stat-val { font-family:'Space Mono',monospace; font-size:28px; font-weight:700; color:var(--text); }
-  .stat-label { font-size:12px; color:var(--text2); margin-top:4px; }
-  .stat-card.accent { border-color:rgba(0,217,255,0.3); }
-  .stat-card.red { border-color:rgba(248,81,73,0.3); }
-  .stat-card.yellow { border-color:rgba(227,179,65,0.3); }
-  .stat-card.admin-c { border-color:rgba(255,107,53,0.3); }
+  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  .stat-card { background:var(--surface); border-radius:8px; padding:16px; }
+  .stat-val { font-size:24px; font-weight:700; color:var(--text); }
+  .stat-label { font-size:12px; color:var(--text-muted); margin-top:4px; }
 
-  /* Table */
-  .admin-table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
-  .admin-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .admin-table th { padding:12px 16px; text-align:left; font-size:11px; font-weight:700; color:var(--text3); letter-spacing:1px; text-transform:uppercase; background:var(--surface2); border-bottom:1px solid var(--border); }
-  .admin-table td { padding:12px 16px; border-bottom:1px solid rgba(33,38,45,0.5); color:var(--text2); }
+  .admin-table-wrap { background:var(--surface); border-radius:8px; overflow:hidden; }
+  .admin-table { width:100%; border-collapse:collapse; font-size:14px; }
+  .admin-table th { padding:10px 16px; text-align:left; font-size:12px; font-weight:700; color:var(--text3); letter-spacing:0.02em; text-transform:uppercase; background:var(--surface2); border-bottom:1px solid var(--border); }
+  .admin-table td { padding:10px 16px; border-bottom:1px solid rgba(0,0,0,0.1); color:var(--text2); }
   .admin-table tr:last-child td { border-bottom:none; }
-  .admin-table tr:hover td { background:rgba(255,255,255,0.01); }
-  .status-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700; }
-  .status-ok { background:rgba(63,185,80,0.15); color:var(--green); }
-  .status-warned { background:rgba(227,179,65,0.15); color:var(--yellow); }
-  .status-banned { background:rgba(248,81,73,0.15); color:var(--red); }
-  .status-muted { background:rgba(255,107,53,0.15); color:var(--admin); }
-  .action-btns { display:flex; gap:6px; }
-  .act-btn { padding:4px 10px; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.15s; }
-  .act-warn { background:rgba(227,179,65,0.15); color:var(--yellow); }
-  .act-warn:hover { background:rgba(227,179,65,0.25); }
-  .act-mute { background:rgba(255,107,53,0.15); color:var(--admin); }
-  .act-mute:hover { background:rgba(255,107,53,0.25); }
-  .act-ban { background:rgba(248,81,73,0.15); color:var(--red); }
-  .act-ban:hover { background:rgba(248,81,73,0.25); }
-  .act-unban { background:rgba(63,185,80,0.15); color:var(--green); }
-  .act-unban:hover { background:rgba(63,185,80,0.25); }
-  .act-del { background:rgba(248,81,73,0.15); color:var(--red); }
-  .act-del:hover { background:rgba(248,81,73,0.25); }
+  .admin-table tr:hover td { background:rgba(0,0,0,0.06); }
+  .status-badge { display:inline-block; padding:2px 6px; border-radius:3px; font-size:12px; font-weight:600; }
+  .status-ok { background:rgba(87,242,135,0.1); color:var(--green); }
+  .status-warned { background:rgba(254,231,92,0.1); color:var(--yellow); }
+  .status-banned { background:rgba(237,66,69,0.1); color:var(--red); }
+  .status-muted { background:rgba(240,178,50,0.1); color:var(--orange); }
+  .action-btns { display:flex; gap:4px; flex-wrap:wrap; }
+  .act-btn { padding:4px 8px; border:none; border-radius:3px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.1s; font-family:'Inter',sans-serif; }
+  .act-warn { background:rgba(254,231,92,0.1); color:var(--yellow); }
+  .act-warn:hover { background:rgba(254,231,92,0.2); }
+  .act-mute { background:rgba(240,178,50,0.1); color:var(--orange); }
+  .act-mute:hover { background:rgba(240,178,50,0.2); }
+  .act-ban { background:rgba(237,66,69,0.1); color:var(--red); }
+  .act-ban:hover { background:rgba(237,66,69,0.2); }
+  .act-unban { background:rgba(87,242,135,0.1); color:var(--green); }
+  .act-unban:hover { background:rgba(87,242,135,0.2); }
+  .act-del { background:rgba(237,66,69,0.1); color:var(--red); }
+  .act-del:hover { background:rgba(237,66,69,0.2); }
 
-  /* Logs */
-  .log-entry { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); align-items:flex-start; }
+  .log-entry { display:flex; gap:12px; padding:8px 0; border-bottom:1px solid rgba(0,0,0,0.1); align-items:flex-start; }
   .log-entry:last-child { border-bottom:none; }
   .log-icon { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
-  .log-time { font-family:'Space Mono',monospace; font-size:11px; color:var(--text3); }
-  .log-text { font-size:13px; color:var(--text2); margin-top:2px; }
+  .log-time { font-family:'Space Mono',monospace; font-size:12px; color:var(--text3); }
+  .log-text { font-size:14px; color:var(--text2); margin-top:2px; }
   .log-text strong { color:var(--text); }
 
-  /* Scrollbars */
-  .admin-main::-webkit-scrollbar { width:4px; }
-  .admin-main::-webkit-scrollbar-track { background:transparent; }
-  .admin-main::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-
-  /* Notifications */
-  .notif {
-    position:fixed; top:20px; right:20px; z-index:9999; padding:12px 18px;
-    border-radius:10px; font-size:13px; font-weight:500;
-    box-shadow:0 8px 32px rgba(0,0,0,0.5); animation:notifIn 0.3s ease;
-    max-width:320px;
+  .admin-form-group { margin-bottom:16px; }
+  .admin-form-group label { display:block; font-size:12px; font-weight:700; color:var(--text2); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.02em; }
+  .admin-input {
+    width:100%; padding:10px; background:var(--bg-dark); border:none;
+    border-radius:3px; color:var(--text); font-family:'Inter',sans-serif; font-size:14px;
+    outline:none; transition:box-shadow 0.2s;
   }
-  @keyframes notifIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
-  .notif-info { background:var(--surface2); border:1px solid var(--border); color:var(--text); }
-  .notif-warn { background:rgba(227,179,65,0.15); border:1px solid rgba(227,179,65,0.3); color:var(--yellow); }
-  .notif-error { background:rgba(248,81,73,0.1); border:1px solid rgba(248,81,73,0.3); color:var(--red); }
-  .notif-success { background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.3); color:var(--green); }
+  .admin-input:focus { box-shadow:0 0 0 2px var(--accent); }
+  .admin-textarea {
+    width:100%; padding:10px; background:var(--bg-dark); border:none;
+    border-radius:3px; color:var(--text); font-family:'Inter',sans-serif; font-size:14px;
+    outline:none; resize:vertical; min-height:80px; transition:box-shadow 0.2s;
+  }
+  .admin-textarea:focus { box-shadow:0 0 0 2px var(--accent); }
+  .admin-btn {
+    padding:8px 16px; background:var(--accent); color:#fff; border:none; border-radius:3px;
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:600; cursor:pointer;
+    transition:background 0.2s;
+  }
+  .admin-btn:hover { background:var(--accent-hover); }
+  .admin-btn.danger { background:var(--red); }
+  .admin-btn.danger:hover { background:#c73538; }
+  .admin-card { background:var(--surface); border-radius:8px; padding:16px; margin-bottom:16px; }
+  .admin-card-title { font-size:14px; font-weight:600; color:var(--text); margin-bottom:8px; }
+  .admin-card-desc { font-size:14px; color:var(--text-muted); margin-bottom:12px; }
+  .role-tag { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:3px; font-size:12px; font-weight:600; margin:2px; }
+  .toggle-switch { position:relative; width:40px; height:24px; display:inline-block; }
+  .toggle-switch input { display:none; }
+  .toggle-slider { position:absolute; inset:0; background:var(--surface3); border-radius:12px; cursor:pointer; transition:background 0.2s; }
+  .toggle-slider::before { content:''; position:absolute; width:18px; height:18px; border-radius:50%; background:#fff; left:3px; top:3px; transition:transform 0.2s; }
+  .toggle-switch input:checked + .toggle-slider { background:var(--accent); }
+  .toggle-switch input:checked + .toggle-slider::before { transform:translateX(16px); }
 
-  /* Misc */
-  .empty-state { text-align:center; padding:60px 20px; color:var(--text3); }
-  .empty-icon { font-size:40px; margin-bottom:12px; }
+  .notif {
+    position:fixed; bottom:24px; right:24px; z-index:9999; padding:12px 16px;
+    border-radius:4px; font-size:14px; font-weight:500;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3); animation:notifSlide 0.3s ease;
+    max-width:340px;
+  }
+  @keyframes notifSlide { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .notif-info { background:var(--surface); color:var(--text); }
+  .notif-warn { background:rgba(254,231,92,0.15); color:var(--yellow); }
+  .notif-error { background:rgba(237,66,69,0.15); color:var(--red); }
+  .notif-success { background:rgba(87,242,135,0.1); color:var(--green); }
+
+  .empty-state { text-align:center; padding:40px 20px; color:var(--text3); }
+  .empty-icon { font-size:32px; margin-bottom:8px; }
   .modal-overlay {
     position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100;
     display:none; align-items:center; justify-content:center;
   }
   .modal-overlay.open { display:flex; }
-  .modal { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:28px; width:400px; animation:slideUp 0.3s ease; }
-  .modal h3 { font-size:16px; margin-bottom:8px; }
-  .modal p { font-size:13px; color:var(--text2); margin-bottom:20px; }
-  .modal-btns { display:flex; gap:10px; justify-content:flex-end; }
-  .btn-cancel { padding:8px 16px; background:var(--surface2); border:1px solid var(--border); color:var(--text2); border-radius:7px; cursor:pointer; font-size:13px; }
-  .btn-danger { padding:8px 16px; background:var(--red); color:#fff; border:none; border-radius:7px; cursor:pointer; font-size:13px; font-weight:700; }
+  .modal { background:var(--bg); border-radius:4px; padding:16px; width:440px; animation:fadeIn 0.2s ease; }
+  .modal h3 { font-size:20px; font-weight:600; margin-bottom:8px; }
+  .modal p { font-size:14px; color:var(--text2); margin-bottom:16px; }
+  .modal-btns { display:flex; gap:8px; justify-content:flex-end; }
+  .btn-cancel { padding:8px 16px; background:transparent; border:none; color:var(--text2); border-radius:3px; cursor:pointer; font-size:14px; font-family:'Inter',sans-serif; }
+  .btn-cancel:hover { text-decoration:underline; }
+  .btn-danger { padding:8px 16px; background:var(--red); color:#fff; border:none; border-radius:3px; cursor:pointer; font-size:14px; font-weight:600; font-family:'Inter',sans-serif; }
+  .btn-danger:hover { background:#c73538; }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════
-     AUTH VIEW
-════════════════════════════════════════════════════ -->
+<!-- ====== AUTH VIEW ====== -->
 <div id="auth-view" class="view active">
   <div class="auth-card">
-    <div class="logo">Nex<span>Chat</span></div>
-    <div class="auth-subtitle">Real-time messaging platform</div>
+    <div class="logo">Welcome back!</div>
+    <div class="auth-subtitle">We're so excited to see you again!</div>
     <div class="tab-row">
-      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
-      <button class="tab-btn" onclick="switchTab('signup')">Create Account</button>
+      <button class="tab-btn active" onclick="switchTab('login')">Log In</button>
+      <button class="tab-btn" onclick="switchTab('signup')">Register</button>
     </div>
     <div id="login-form">
-      <div class="field"><label>Username</label><input type="text" id="login-user" placeholder="Enter username" autocomplete="username"></div>
-      <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password"></div>
-      <button class="btn-primary" onclick="doLogin()">Sign In</button>
+      <div class="field"><label>Email or Username</label><input type="text" id="login-user" placeholder="" autocomplete="username"></div>
+      <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="" autocomplete="current-password"></div>
+      <button class="btn-primary" onclick="doLogin()">Log In</button>
+      <div class="auth-footer" style="margin-top:4px;">
+        <span style="color:var(--accent);font-size:14px;cursor:pointer;">Forgot your password?</span>
+      </div>
     </div>
     <div id="signup-form" style="display:none">
-      <div class="field"><label>Username</label><input type="text" id="signup-user" placeholder="Choose a username" autocomplete="username"></div>
-      <div class="field"><label>Password</label><input type="password" id="signup-pass" placeholder="Create a password" autocomplete="new-password"></div>
-      <div class="field"><label>Confirm Password</label><input type="password" id="signup-pass2" placeholder="Confirm your password"></div>
-      <button class="btn-primary" onclick="doSignup()">Create Account</button>
+      <div class="field"><label>Username</label><input type="text" id="signup-user" placeholder="" autocomplete="username"></div>
+      <div class="field"><label>Password</label><input type="password" id="signup-pass" placeholder="" autocomplete="new-password"></div>
+      <div class="field"><label>Confirm Password</label><input type="password" id="signup-pass2" placeholder=""></div>
+      <button class="btn-primary" onclick="doSignup()">Register</button>
     </div>
     <div class="auth-error" id="auth-error"></div>
+    <div class="auth-footer" style="margin-top:16px;">
+      <span id="auth-toggle-text">Need an account? <a onclick="switchTab('signup')">Register</a></span>
+    </div>
     <div class="admin-hint">
-      <span class="admin-link" onclick="gotoAdminAuth()">🔐 Admin Access</span>
+      <span class="admin-link" onclick="gotoAdminAuth()">Admin Portal</span>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ADMIN AUTH VIEW
-════════════════════════════════════════════════════ -->
+<!-- ====== ADMIN AUTH VIEW ====== -->
 <div id="admin-auth-view" class="view">
   <div class="admin-auth-card">
-    <div class="admin-logo">⚡ ADMIN PORTAL</div>
-    <p style="font-size:12px;color:var(--text2);margin-top:6px;">Restricted access. Multi-factor verification required.</p>
+    <div class="admin-logo">Admin Portal</div>
+    <p style="font-size:14px;color:var(--text-muted);margin-top:4px;text-align:center;">Multi-factor verification required</p>
     <div class="security-steps">
       <div class="sec-step active" id="step-ind-1"></div>
       <div class="sec-step" id="step-ind-2"></div>
       <div class="sec-step" id="step-ind-3"></div>
     </div>
-
-    <!-- Step 1: Secret Key -->
     <div class="step-panel active" id="admin-step-1">
-      <div class="step-label">STEP 1 / 3 — AUTHORIZATION KEY</div>
-      <div class="field"><label>System Authorization Key</label><input type="password" id="admin-key" placeholder="Enter system key" autocomplete="off"></div>
-      <button class="btn-admin" onclick="adminStep1()">Verify Key →</button>
+      <div class="step-label">Step 1 of 3 - Authorization Key</div>
+      <div class="field"><label>System Authorization Key</label><input type="password" id="admin-key" placeholder="" autocomplete="off"></div>
+      <button class="btn-admin" onclick="adminStep1()">Continue</button>
       <div class="admin-err" id="admin-err-1"></div>
     </div>
-
-    <!-- Step 2: Credentials -->
     <div class="step-panel" id="admin-step-2">
-      <div class="step-label">STEP 2 / 3 — ADMIN CREDENTIALS</div>
-      <div class="field"><label>Admin Username</label><input type="text" id="admin-user" placeholder="Admin username" autocomplete="off"></div>
-      <div class="field"><label>Admin Password</label><input type="password" id="admin-pass" placeholder="Admin password" autocomplete="off"></div>
-      <button class="btn-admin" onclick="adminStep2()">Authenticate →</button>
+      <div class="step-label">Step 2 of 3 - Admin Credentials</div>
+      <div class="field"><label>Admin Username</label><input type="text" id="admin-user" placeholder="" autocomplete="off"></div>
+      <div class="field"><label>Admin Password</label><input type="password" id="admin-pass" placeholder="" autocomplete="off"></div>
+      <button class="btn-admin" onclick="adminStep2()">Continue</button>
       <div class="admin-err" id="admin-err-2"></div>
     </div>
-
-    <!-- Step 3: 2FA Code -->
     <div class="step-panel" id="admin-step-3">
-      <div class="step-label">STEP 3 / 3 — VERIFICATION CODE</div>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:16px;">Enter the 6-digit access code issued by the system administrator.</p>
-      <div class="field"><label>Access Code</label><input type="text" id="admin-code" placeholder="000000" maxlength="6" style="font-family:'Space Mono',monospace;font-size:22px;letter-spacing:8px;text-align:center;" autocomplete="off"></div>
-      <button class="btn-admin" onclick="adminStep3()">Enter Admin Panel →</button>
+      <div class="step-label">Step 3 of 3 - Verification Code</div>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Enter the 6-digit code from your authenticator.</p>
+      <div class="field"><label>Code</label><input type="text" id="admin-code" placeholder="000000" maxlength="6" style="font-family:'Space Mono',monospace;font-size:24px;letter-spacing:8px;text-align:center;" autocomplete="off"></div>
+      <button class="btn-admin" onclick="adminStep3()">Verify</button>
       <div class="admin-err" id="admin-err-3"></div>
     </div>
-
-    <br>
-    <button class="back-btn" onclick="gotoAuth()">← Back to login</button>
-    <div style="margin-top:12px;font-size:11px;color:var(--text3);font-family:'Space Mono',monospace;">
-      HINT: Key=NEXCHAT-ADMIN | User=superadmin | Pass=Nx@2024! | Code=847291
-    </div>
+    <button class="back-btn" onclick="gotoAuth()">Back to login</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     CHAT VIEW
-════════════════════════════════════════════════════ -->
+<!-- ====== CHAT VIEW ====== -->
 <div id="chat-view" class="view">
+  <div class="server-list">
+    <div class="server-icon home" title="NexChat">N</div>
+    <div class="server-divider"></div>
+    <div class="server-icon add" title="Add a Server">+</div>
+  </div>
   <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-logo">NexChat</div>
-      <div class="user-pill">
-        <div class="avatar" id="sidebar-avatar">
-          <div class="online-dot"></div>
-        </div>
-        <div class="user-info">
-          <div class="user-name" id="sidebar-username">User</div>
-          <div class="user-role" id="sidebar-role">Member</div>
-        </div>
-        <button class="logout-btn" title="Logout" onclick="logout()">⏻</button>
-      </div>
-    </div>
+    <div class="sidebar-header">NexChat</div>
     <div class="rooms-section">
-      <div class="section-title" style="margin-top:8px;">Channels</div>
-      <button class="room-btn active" onclick="switchRoom('general')" id="room-general">
-        <span class="room-hash">#</span> general
-      </button>
-      <button class="room-btn" onclick="switchRoom('offtopic')" id="room-offtopic">
-        <span class="room-hash">#</span> off-topic
-      </button>
-      <button class="room-btn" onclick="switchRoom('gaming')" id="room-gaming">
-        <span class="room-hash">#</span> gaming
-      </button>
-      <button class="room-btn" onclick="switchRoom('tech')" id="room-tech">
-        <span class="room-hash">#</span> tech
-      </button>
+      <div class="section-title">Text Channels</div>
+      <button class="room-btn active" onclick="switchRoom('general')" id="room-general"><span class="room-hash">#</span> general</button>
+      <button class="room-btn" onclick="switchRoom('offtopic')" id="room-offtopic"><span class="room-hash">#</span> off-topic</button>
+      <button class="room-btn" onclick="switchRoom('gaming')" id="room-gaming"><span class="room-hash">#</span> gaming</button>
+      <button class="room-btn" onclick="switchRoom('tech')" id="room-tech"><span class="room-hash">#</span> tech</button>
     </div>
-    <div class="online-section">
-      <div class="section-title">Online</div>
-      <div class="online-list" id="online-list"></div>
+    <div class="user-area">
+      <div class="avatar" id="sidebar-avatar"><div class="online-dot"></div></div>
+      <div class="user-info">
+        <div class="user-name" id="sidebar-username">User</div>
+        <div class="user-tag" id="sidebar-role">Online</div>
+      </div>
+      <button class="logout-btn" title="Log Out" onclick="logout()">&#x23FB;</button>
     </div>
   </div>
-
   <div class="chat-main">
     <div class="chat-header">
-      <span style="font-family:'Space Mono',monospace;color:var(--accent);font-size:18px;">#</span>
+      <span class="room-hash">#</span>
       <span class="chat-room-name" id="chat-room-name">general</span>
-      <span class="chat-room-desc" id="chat-room-desc">General discussion</span>
+      <div class="header-divider"></div>
+      <span class="chat-room-desc" id="chat-room-desc">The main hub. Keep it friendly!</span>
+      <div class="header-icons">
+        <button class="header-icon" title="Member List" onclick="toggleMembers()">&#x1F465;</button>
+      </div>
     </div>
     <div class="messages-area" id="messages-area"></div>
     <div class="input-area">
-      <div class="warning-banner" id="warning-banner">
-        ⚠️ <span id="warning-text">Please watch your language.</span>
-      </div>
-      <div class="muted-banner" id="muted-banner">
-        🔇 <span>You have been muted by an admin for violating community guidelines.</span>
-      </div>
-      <div class="input-row">
-        <textarea class="msg-input" id="msg-input" placeholder="Message #general..." rows="1"
-          onkeydown="handleKey(event)"></textarea>
-        <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+      <div class="warning-banner" id="warning-banner"><span id="warning-text"></span></div>
+      <div class="muted-banner" id="muted-banner"><span>You have been muted by a moderator.</span></div>
+      <div class="input-wrapper">
+        <span class="input-icon">+</span>
+        <textarea class="msg-input" id="msg-input" placeholder="Message #general" rows="1" onkeydown="handleKey(event)"></textarea>
+        <div class="input-actions">
+          <button class="input-action-btn" title="Emoji">&#x1F642;</button>
+        </div>
       </div>
     </div>
   </div>
+  <div class="member-list" id="member-list"><div id="member-list-content"></div></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ADMIN PANEL VIEW
-════════════════════════════════════════════════════ -->
+<!-- ====== ADMIN PANEL ====== -->
 <div id="admin-view" class="view">
   <div class="admin-sidebar">
-    <div class="admin-sidebar-header">
-      <div class="admin-sidebar-logo">⚡ ADMIN</div>
-      <div class="admin-sidebar-sub">NexChat Control Panel</div>
-    </div>
+    <div class="admin-sidebar-header"><span class="admin-sidebar-logo">Server Settings</span></div>
     <div class="admin-nav">
-      <button class="admin-nav-btn active" onclick="adminTab('dashboard')">
-        <span class="nav-icon">📊</span> Dashboard
-      </button>
-      <button class="admin-nav-btn" onclick="adminTab('users')">
-        <span class="nav-icon">👥</span> Users
-      </button>
-      <button class="admin-nav-btn" onclick="adminTab('messages')">
-        <span class="nav-icon">💬</span> Messages
-      </button>
-      <button class="admin-nav-btn" onclick="adminTab('logs')">
-        <span class="nav-icon">📋</span> Activity Log
-      </button>
+      <div class="admin-nav-separator">Overview</div>
+      <button class="admin-nav-btn active" onclick="adminTab('dashboard')"><span class="nav-icon">&#x1F4CA;</span> Dashboard</button>
+      <button class="admin-nav-btn" onclick="adminTab('server-settings')"><span class="nav-icon">&#x2699;</span> Server Settings</button>
+      <div class="admin-nav-separator">Moderation</div>
+      <button class="admin-nav-btn" onclick="adminTab('users')"><span class="nav-icon">&#x1F465;</span> Members</button>
+      <button class="admin-nav-btn" onclick="adminTab('roles')"><span class="nav-icon">&#x1F6E1;</span> Roles</button>
+      <button class="admin-nav-btn" onclick="adminTab('messages')"><span class="nav-icon">&#x1F4AC;</span> Messages</button>
+      <div class="admin-nav-separator">Management</div>
+      <button class="admin-nav-btn" onclick="adminTab('channels')"><span class="nav-icon">#</span> Channels</button>
+      <button class="admin-nav-btn" onclick="adminTab('announcements')"><span class="nav-icon">&#x1F4E2;</span> Announcements</button>
+      <button class="admin-nav-btn" onclick="adminTab('automod')"><span class="nav-icon">&#x1F916;</span> AutoMod</button>
+      <button class="admin-nav-btn" onclick="adminTab('logs')"><span class="nav-icon">&#x1F4CB;</span> Audit Log</button>
     </div>
-    <div class="admin-exit">
-      <button class="admin-exit-btn" onclick="exitAdmin()">← Exit Admin Panel</button>
-    </div>
+    <div class="admin-exit"><button class="admin-exit-btn" onclick="exitAdmin()">&#x2190; Back to Chat</button></div>
   </div>
-
   <div class="admin-main">
-    <!-- Dashboard -->
     <div class="admin-panel active" id="panel-dashboard">
       <div class="admin-title">Dashboard</div>
-      <div class="admin-desc">System overview and live statistics</div>
+      <div class="admin-desc">Server overview and statistics</div>
       <div class="stats-grid">
-        <div class="stat-card accent">
-          <div class="stat-val" id="stat-users">0</div>
-          <div class="stat-label">Total Users</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-val" id="stat-messages">0</div>
-          <div class="stat-label">Total Messages</div>
-        </div>
-        <div class="stat-card yellow">
-          <div class="stat-val" id="stat-flagged">0</div>
-          <div class="stat-label">Flagged Messages</div>
-        </div>
-        <div class="stat-card red">
-          <div class="stat-val" id="stat-banned">0</div>
-          <div class="stat-label">Banned Users</div>
-        </div>
+        <div class="stat-card"><div class="stat-val" id="stat-users">0</div><div class="stat-label">Members</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-online">0</div><div class="stat-label">Online</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-messages">0</div><div class="stat-label">Messages</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-flagged">0</div><div class="stat-label">Flagged</div></div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;">
-        <div style="font-size:13px;font-weight:600;margin-bottom:16px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-size:11px;">Recent Activity</div>
-        <div id="dash-logs"></div>
+      <div class="admin-card"><div class="admin-card-title">Recent Activity</div><div id="dash-logs"></div></div>
+    </div>
+    <div class="admin-panel" id="panel-server-settings">
+      <div class="admin-title">Server Settings</div>
+      <div class="admin-desc">Manage your server identity and configuration</div>
+      <div class="admin-card">
+        <div class="admin-form-group"><label>Server Name</label><input class="admin-input" type="text" id="server-name-input" value="NexChat"></div>
+        <div class="admin-form-group"><label>Server Description</label><textarea class="admin-textarea" id="server-desc-input">A real-time messaging platform</textarea></div>
+        <button class="admin-btn" onclick="saveServerSettings()">Save Changes</button>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">Danger Zone</div>
+        <div class="admin-card-desc">Irreversible and destructive actions</div>
+        <button class="admin-btn danger" onclick="notify('This action is not available in demo mode.','error')">Delete Server</button>
       </div>
     </div>
-
-    <!-- Users -->
     <div class="admin-panel" id="panel-users">
-      <div class="admin-title">User Management</div>
-      <div class="admin-desc">View, warn, mute, or ban users</div>
+      <div class="admin-title">Members</div>
+      <div class="admin-desc">View and manage server members</div>
       <div class="admin-table-wrap">
         <table class="admin-table">
-          <thead><tr><th>User</th><th>Status</th><th>Warnings</th><th>Messages</th><th>Joined</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Member</th><th>Status</th><th>Warnings</th><th>Messages</th><th>Joined</th><th>Actions</th></tr></thead>
           <tbody id="users-table"></tbody>
         </table>
       </div>
     </div>
-
-    <!-- Messages -->
+    <div class="admin-panel" id="panel-roles">
+      <div class="admin-title">Roles</div>
+      <div class="admin-desc">Manage roles and permissions</div>
+      <div id="roles-list"></div>
+      <div class="admin-card" style="margin-top:16px;">
+        <div class="admin-card-title">Create New Role</div>
+        <div class="admin-form-group"><label>Role Name</label><input class="admin-input" type="text" id="new-role-name" placeholder="e.g. Moderator"></div>
+        <div class="admin-form-group"><label>Color (hex)</label><input class="admin-input" type="text" id="new-role-color" placeholder="#5865f2" maxlength="7"></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="role-perm-manage"> Manage Messages</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="role-perm-kick"> Kick Members</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="role-perm-ban"> Ban Members</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="role-perm-admin"> Administrator</label>
+        </div>
+        <button class="admin-btn" onclick="createRole()">Create Role</button>
+      </div>
+    </div>
     <div class="admin-panel" id="panel-messages">
-      <div class="admin-title">Message Log</div>
-      <div class="admin-desc">All messages across all channels. Delete flagged or inappropriate content.</div>
+      <div class="admin-title">Messages</div>
+      <div class="admin-desc">Browse and moderate all messages across channels</div>
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead><tr><th>Author</th><th>Channel</th><th>Message</th><th>Time</th><th>Flag</th><th>Actions</th></tr></thead>
@@ -555,19 +609,59 @@
         </table>
       </div>
     </div>
-
-    <!-- Logs -->
-    <div class="admin-panel" id="panel-logs">
-      <div class="admin-title">Activity Log</div>
-      <div class="admin-desc">Complete audit trail of all admin actions</div>
-      <div class="admin-table-wrap" style="padding:8px 16px;">
-        <div id="activity-logs"></div>
+    <div class="admin-panel" id="panel-channels">
+      <div class="admin-title">Channels</div>
+      <div class="admin-desc">Create and manage text channels</div>
+      <div id="channels-list"></div>
+      <div class="admin-card" style="margin-top:16px;">
+        <div class="admin-card-title">Create Channel</div>
+        <div class="admin-form-group"><label>Channel Name</label><input class="admin-input" type="text" id="new-channel-name" placeholder="new-channel"></div>
+        <div class="admin-form-group"><label>Topic</label><input class="admin-input" type="text" id="new-channel-topic" placeholder="What is this channel about?"></div>
+        <button class="admin-btn" onclick="createChannel()">Create Channel</button>
       </div>
+    </div>
+    <div class="admin-panel" id="panel-announcements">
+      <div class="admin-title">Announcements</div>
+      <div class="admin-desc">Broadcast a message to a channel</div>
+      <div class="admin-card">
+        <div class="admin-form-group"><label>Target Channel</label><select class="admin-input" id="announce-channel" style="cursor:pointer;"></select></div>
+        <div class="admin-form-group"><label>Message</label><textarea class="admin-textarea" id="announce-text" placeholder="Write your announcement..."></textarea></div>
+        <button class="admin-btn" onclick="sendAnnouncement()">Send Announcement</button>
+      </div>
+      <div class="admin-card"><div class="admin-card-title">Recent Announcements</div><div id="announcements-log"></div></div>
+    </div>
+    <div class="admin-panel" id="panel-automod">
+      <div class="admin-title">AutoMod</div>
+      <div class="admin-desc">Configure automatic moderation rules</div>
+      <div class="admin-card">
+        <div class="admin-card-title">Profanity Filter</div>
+        <div class="admin-card-desc">Automatically filter messages containing blocked words</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <label class="toggle-switch"><input type="checkbox" id="profanity-toggle" checked onchange="toggleProfanityFilter()"><span class="toggle-slider"></span></label>
+          <span style="font-size:14px;color:var(--text2);" id="profanity-status">Enabled</span>
+        </div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">Auto-Mute Threshold</div>
+        <div class="admin-card-desc">Number of warnings before a user is automatically muted</div>
+        <div class="admin-form-group"><input class="admin-input" type="number" id="automute-threshold" value="3" min="1" max="10" style="width:100px;"></div>
+        <button class="admin-btn" onclick="saveAutoModSettings()">Save Settings</button>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">Custom Blocked Words</div>
+        <div class="admin-card-desc">Add custom words to the filter (one per line)</div>
+        <div class="admin-form-group"><textarea class="admin-textarea" id="custom-words" placeholder="Enter words to block, one per line..." style="min-height:100px;"></textarea></div>
+        <button class="admin-btn" onclick="saveCustomWords()">Update Filter</button>
+      </div>
+    </div>
+    <div class="admin-panel" id="panel-logs">
+      <div class="admin-title">Audit Log</div>
+      <div class="admin-desc">Complete history of all administrative actions</div>
+      <div class="admin-card"><div id="activity-logs"></div></div>
     </div>
   </div>
 </div>
 
-<!-- Confirm Modal -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <h3 id="modal-title">Confirm Action</h3>
@@ -580,103 +674,92 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
-// DATA STORE
-// ═══════════════════════════════════════════════════
-const COLORS = ['#f97316','#06b6d4','#8b5cf6','#ec4899','#10b981','#eab308','#ef4444','#3b82f6'];
+var COLORS = ['#5865f2','#57f287','#fee75c','#eb459e','#ed4245','#f0b232','#e67e22','#1abc9c','#e91e63','#9b59b6'];
 
-const db = {
-  users: {
-    'alice': { password:'alice123', role:'member', warnings:0, isBanned:false, isMuted:false, joinDate:'2024-11-10', color:'#06b6d4' },
-    'bob':   { password:'bob123',   role:'member', warnings:1, isBanned:false, isMuted:false, joinDate:'2024-12-02', color:'#8b5cf6' },
-    'carol': { password:'carol123', role:'member', warnings:0, isBanned:false, isMuted:false, joinDate:'2025-01-15', color:'#10b981' },
-    'dave':  { password:'dave123',  role:'member', warnings:2, isBanned:false, isMuted:true,  joinDate:'2025-02-08', color:'#f97316' },
-    'superadmin': { password:'Nx@2024!', role:'admin', warnings:0, isBanned:false, isMuted:false, joinDate:'2024-01-01', color:'#ff6b35' },
-  },
-  messages: [
-    { id:1, username:'alice',  room:'general', text:'Hey everyone! Welcome to NexChat 🎉', ts: Date.now()-3600000*5, deleted:false, flagged:false },
-    { id:2, username:'bob',    room:'general', text:'Thanks! This place looks awesome.', ts: Date.now()-3600000*4, deleted:false, flagged:false },
-    { id:3, username:'carol',  room:'general', text:'Loving the dark theme 🔥', ts: Date.now()-3600000*3, deleted:false, flagged:false },
-    { id:4, username:'alice',  room:'general', text:'@bob have you checked out the #gaming channel yet?', ts: Date.now()-3600000*2, deleted:false, flagged:false },
-    { id:5, username:'bob',    room:'gaming',  text:'Anyone playing anything good lately?', ts: Date.now()-3600000*2, deleted:false, flagged:false },
-    { id:6, username:'carol',  room:'gaming',  text:'Just finished Elden Ring again. 100% recommend.', ts: Date.now()-3600000, deleted:false, flagged:false },
-    { id:7, username:'alice',  room:'tech',    text:'What do you all think of the new AI models coming out?', ts: Date.now()-1800000, deleted:false, flagged:false },
-    { id:8, username:'bob',    room:'tech',    text:'The progress is insane. GPT-5 looks wild.', ts: Date.now()-900000, deleted:false, flagged:false },
-  ],
+var db = {
+  users: {},
+  messages: [],
   logs: [],
-  nextId: 9,
+  nextId: 1,
   onlineUsers: new Set(),
+  roles: [
+    { name:'Admin', color:'#ed4245', permissions:['admin','manage_messages','kick','ban'], system:true },
+    { name:'Moderator', color:'#57f287', permissions:['manage_messages','kick'], system:false },
+    { name:'Member', color:'#b5bac1', permissions:[], system:true },
+  ],
+  serverName: 'NexChat',
+  serverDesc: 'A real-time messaging platform',
+  automod: { profanityEnabled:true, muteThreshold:3, customWords:[] },
+  announcements: [],
 };
 
-const PROFANITY = [
+var PROFANITY = [
   'fuck','shit','ass','bitch','cunt','dick','piss','cock','bastard','damn','hell',
-  'crap','slut','whore','nigger','nigga','faggot','retard','idiot','moron','asshole',
+  'crap','slut','whore','faggot','retard','idiot','moron','asshole',
   'motherfucker','bullshit'
 ];
 
-const ROOMS = {
+var ROOMS = {
   general: 'The main hub. Keep it friendly!',
   offtopic: 'Anything goes. Almost.',
   gaming: 'Talk games, strategies & reviews.',
   tech: 'Dev talk, tools, and tech news.'
 };
 
-let session = { user: null, isAdmin: false };
-let currentRoom = 'general';
-let msgInterval = null;
+var session = { user: null, isAdmin: false };
+var currentRoom = 'general';
+var msgInterval = null;
+var membersVisible = true;
 
-// ═══════════════════════════════════════════════════
-// VIEWS
-// ═══════════════════════════════════════════════════
 function showView(id) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
 }
-
 function gotoAuth() { showView('auth-view'); }
 function gotoAdminAuth() { showView('admin-auth-view'); resetAdminSteps(); }
 
-// ═══════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (tab==='login'?i===0:i===1)));
+  document.querySelectorAll('.tab-btn').forEach(function(b,i) { b.classList.toggle('active', (tab==='login'?i===0:i===1)); });
   document.getElementById('login-form').style.display = tab==='login'?'block':'none';
   document.getElementById('signup-form').style.display = tab==='signup'?'block':'none';
+  var toggle = document.getElementById('auth-toggle-text');
+  if (tab==='login') {
+    toggle.innerHTML = "Need an account? <a onclick=\"switchTab('signup')\">Register</a>";
+  } else {
+    toggle.innerHTML = "Already have an account? <a onclick=\"switchTab('login')\">Log In</a>";
+  }
   clearAuthError();
 }
 
 function showAuthError(msg) {
-  const el = document.getElementById('auth-error');
+  var el = document.getElementById('auth-error');
   el.textContent = msg; el.style.display = 'block';
 }
-function clearAuthError() {
-  document.getElementById('auth-error').style.display = 'none';
-}
+function clearAuthError() { document.getElementById('auth-error').style.display = 'none'; }
 
 function doLogin() {
-  const user = document.getElementById('login-user').value.trim().toLowerCase();
-  const pass = document.getElementById('login-pass').value;
+  var user = document.getElementById('login-user').value.trim().toLowerCase();
+  var pass = document.getElementById('login-pass').value;
   if (!user || !pass) return showAuthError('Please fill in all fields.');
-  const u = db.users[user];
-  if (!u || u.password !== pass) return showAuthError('Invalid username or password.');
-  if (u.isBanned) return showAuthError('Your account has been banned. Contact an administrator.');
+  var u = db.users[user];
+  if (!u || u.password !== pass) return showAuthError('Login or password is invalid.');
+  if (u.isBanned) return showAuthError('Your account has been disabled. Contact a server admin.');
   enterChat(user);
 }
 
 function doSignup() {
-  const user = document.getElementById('signup-user').value.trim().toLowerCase();
-  const pass = document.getElementById('signup-pass').value;
-  const pass2 = document.getElementById('signup-pass2').value;
+  var user = document.getElementById('signup-user').value.trim().toLowerCase();
+  var pass = document.getElementById('signup-pass').value;
+  var pass2 = document.getElementById('signup-pass2').value;
   if (!user || !pass || !pass2) return showAuthError('Please fill in all fields.');
   if (user.length < 3) return showAuthError('Username must be at least 3 characters.');
-  if (!/^[a-z0-9_]+$/.test(user)) return showAuthError('Username can only contain letters, numbers, and underscores.');
-  if (db.users[user]) return showAuthError('That username is already taken.');
+  if (!/^[a-z0-9_]+$/.test(user)) return showAuthError('Username can only contain lowercase letters, numbers, and underscores.');
+  if (db.users[user]) return showAuthError('Username is already taken.');
   if (pass.length < 6) return showAuthError('Password must be at least 6 characters.');
-  if (pass !== pass2) return showAuthError('Passwords do not match.');
-  const color = COLORS[Object.keys(db.users).length % COLORS.length];
-  db.users[user] = { password:pass, role:'member', warnings:0, isBanned:false, isMuted:false, joinDate:new Date().toISOString().split('T')[0], color };
-  addLog('system', null, user, 'User registered');
+  if (pass !== pass2) return showAuthError("Passwords don't match.");
+  var color = COLORS[Object.keys(db.users).length % COLORS.length];
+  db.users[user] = { password:pass, role:'member', warnings:0, isBanned:false, isMuted:false, joinDate:new Date().toISOString().split('T')[0], color:color };
+  addLog('system', null, user, 'Account created');
   enterChat(user);
 }
 
@@ -699,60 +782,54 @@ function logout() {
   showView('auth-view');
 }
 
-// ═══════════════════════════════════════════════════
-// ADMIN AUTH
-// ═══════════════════════════════════════════════════
-let adminStepNum = 1;
-let adminAuthData = {};
+var adminStepNum = 1;
+var adminAuthData = {};
 
 function resetAdminSteps() {
-  adminStepNum = 1;
-  adminAuthData = {};
-  for(let i=1;i<=3;i++) {
-    document.getElementById(`admin-step-${i}`).classList.toggle('active', i===1);
-    document.getElementById(`step-ind-${i}`).className = 'sec-step' + (i===1?' active':'');
-    const err = document.getElementById(`admin-err-${i}`);
+  adminStepNum = 1; adminAuthData = {};
+  for(var i=1;i<=3;i++) {
+    document.getElementById('admin-step-'+i).classList.toggle('active', i===1);
+    document.getElementById('step-ind-'+i).className = 'sec-step' + (i===1?' active':'');
+    var err = document.getElementById('admin-err-'+i);
     if(err) { err.style.display='none'; err.textContent=''; }
   }
-  ['admin-key','admin-user','admin-pass','admin-code'].forEach(id => {
-    const el = document.getElementById(id); if(el) el.value='';
+  ['admin-key','admin-user','admin-pass','admin-code'].forEach(function(id) {
+    var el = document.getElementById(id); if(el) el.value='';
   });
 }
 
 function adminShowErr(step, msg) {
-  const el = document.getElementById(`admin-err-${step}`);
+  var el = document.getElementById('admin-err-'+step);
   el.textContent = msg; el.style.display = 'block';
-  el.style.animation = 'none'; el.offsetHeight;
-  el.style.animation = '';
 }
 
 function advanceStep(to) {
-  document.getElementById(`admin-step-${adminStepNum}`).classList.remove('active');
-  document.getElementById(`step-ind-${adminStepNum}`).className = 'sec-step done';
+  document.getElementById('admin-step-'+adminStepNum).classList.remove('active');
+  document.getElementById('step-ind-'+adminStepNum).className = 'sec-step done';
   adminStepNum = to;
-  document.getElementById(`admin-step-${to}`).classList.add('active');
-  document.getElementById(`step-ind-${to}`).className = 'sec-step active';
+  document.getElementById('admin-step-'+to).classList.add('active');
+  document.getElementById('step-ind-'+to).className = 'sec-step active';
 }
 
 function adminStep1() {
-  const key = document.getElementById('admin-key').value.trim();
-  if (key !== 'NEXCHAT-ADMIN') return adminShowErr(1, '⛔ Invalid authorization key.');
+  var key = document.getElementById('admin-key').value.trim();
+  if (key !== 'NEXCHAT-ADMIN') return adminShowErr(1, 'Invalid authorization key.');
   adminAuthData.key = key;
   advanceStep(2);
 }
 
 function adminStep2() {
-  const user = document.getElementById('admin-user').value.trim();
-  const pass = document.getElementById('admin-pass').value;
-  const u = db.users[user];
-  if (!u || u.role !== 'admin' || u.password !== pass) return adminShowErr(2, '⛔ Invalid admin credentials.');
+  var user = document.getElementById('admin-user').value.trim();
+  var pass = document.getElementById('admin-pass').value;
+  var u = db.users[user];
+  if (!u || u.role !== 'admin' || u.password !== pass) return adminShowErr(2, 'Invalid admin credentials.');
   adminAuthData.user = user;
   advanceStep(3);
 }
 
 function adminStep3() {
-  const code = document.getElementById('admin-code').value.trim();
-  if (code !== '847291') return adminShowErr(3, '⛔ Invalid verification code.');
+  var code = document.getElementById('admin-code').value.trim();
+  if (code !== '847291') return adminShowErr(3, 'Invalid verification code.');
   session.user = adminAuthData.user;
   session.isAdmin = true;
   db.onlineUsers.add(adminAuthData.user);
@@ -760,318 +837,412 @@ function adminStep3() {
   showAdminPanel();
 }
 
-// ═══════════════════════════════════════════════════
-// CHAT UI
-// ═══════════════════════════════════════════════════
 function setupChatUI() {
-  const u = db.users[session.user];
-  const el = document.getElementById('sidebar-avatar');
+  var u = db.users[session.user];
+  var el = document.getElementById('sidebar-avatar');
   el.style.background = u.color;
   el.style.color = '#fff';
   el.innerHTML = session.user[0].toUpperCase() + '<div class="online-dot"></div>';
   document.getElementById('sidebar-username').textContent = session.user;
-  document.getElementById('sidebar-role').textContent = u.role === 'admin' ? '⚡ Admin' : 'Member';
-  renderOnlineList();
+  document.getElementById('sidebar-role').textContent = u.role === 'admin' ? 'Admin' : 'Online';
+  renderMemberList();
   if (msgInterval) clearInterval(msgInterval);
-  msgInterval = setInterval(() => {
+  msgInterval = setInterval(function() {
     renderMessages();
-    renderOnlineList();
+    renderMemberList();
     updateInputState();
-  }, 1000);
+  }, 2000);
+}
+
+function toggleMembers() {
+  membersVisible = !membersVisible;
+  document.getElementById('member-list').style.display = membersVisible ? 'block' : 'none';
 }
 
 function switchRoom(room) {
   currentRoom = room;
-  document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(`room-${room}`).classList.add('active');
-  document.getElementById('chat-room-name').textContent = room;
-  document.getElementById('chat-room-desc').textContent = ROOMS[room];
-  document.getElementById('msg-input').placeholder = `Message #${room}...`;
+  document.querySelectorAll('.room-btn').forEach(function(b) { b.classList.remove('active'); });
+  var roomBtn = document.getElementById('room-'+room);
+  if (roomBtn) roomBtn.classList.add('active');
+  document.getElementById('chat-room-name').textContent = room === 'offtopic' ? 'off-topic' : room;
+  document.getElementById('chat-room-desc').textContent = ROOMS[room] || '';
+  document.getElementById('msg-input').placeholder = 'Message #' + (room === 'offtopic' ? 'off-topic' : room);
   renderMessages();
 }
 
 function renderMessages() {
-  const area = document.getElementById('messages-area');
-  const msgs = db.messages.filter(m => m.room === currentRoom && !m.deleted);
-  let html = '';
-  let lastDate = '';
-  msgs.forEach(m => {
-    const d = new Date(m.ts);
-    const dateStr = d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  var area = document.getElementById('messages-area');
+  var msgs = db.messages.filter(function(m) { return m.room === currentRoom && !m.deleted; });
+  var html = '';
+  var lastDate = '';
+  var lastUser = '';
+  var lastTs = 0;
+  var roomDisplay = currentRoom === 'offtopic' ? 'off-topic' : currentRoom;
+  html += '<div class="welcome-msg"><h2>Welcome to #' + roomDisplay + '!</h2><p>This is the start of the #' + roomDisplay + ' channel. ' + (ROOMS[currentRoom] || '') + '</p></div>';
+  msgs.forEach(function(m) {
+    var d = new Date(m.ts);
+    var dateStr = d.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
     if (dateStr !== lastDate) {
-      html += `<div class="date-divider"><span>${dateStr}</span></div>`;
+      html += '<div class="date-divider"><span>' + dateStr + '</span></div>';
       lastDate = dateStr;
+      lastUser = '';
     }
-    const u = db.users[m.username] || { color:'#888', role:'member' };
-    const timeStr = d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
-    const badge = u.role==='admin' ? '<span class="msg-badge badge-admin">ADMIN</span>' : '';
-    const flagNote = m.flagged ? '<div class="msg-flag">⚠ Message contained filtered content</div>' : '';
-    html += `
-      <div class="msg" id="msg-${m.id}">
-        <div class="msg-avatar" style="background:${u.color};color:#fff">${m.username[0].toUpperCase()}</div>
-        <div class="msg-content">
-          <div class="msg-header">
-            <span class="msg-author" style="color:${u.color}">${m.username}</span>
-            ${badge}
-            <span class="msg-time">${timeStr}</span>
-          </div>
-          <div class="msg-text${m.flagged?' flagged':''}">${escHtml(m.text)}</div>
-          ${flagNote}
-        </div>
-      </div>`;
+    var u = db.users[m.username] || { color:'#888', role:'member' };
+    var timeFull = d.toLocaleString('en-US', {month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'});
+    var timeShort = d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+    var sameUser = m.username === lastUser && (m.ts - lastTs < 420000);
+    var badge = u.role === 'admin' ? '<span class="msg-badge badge-admin">ADMIN</span>' : '';
+    var flagNote = m.flagged ? '<div class="msg-flag">Message contained filtered content</div>' : '';
+    if (sameUser) {
+      html += '<div class="msg" id="msg-' + m.id + '"><div class="msg-avatar hidden-avatar"></div><div class="msg-content"><span class="msg-time inline-time">' + timeShort + '</span><div class="msg-text' + (m.flagged ? ' flagged' : '') + '">' + escHtml(m.text) + '</div>' + flagNote + '</div></div>';
+    } else {
+      html += '<div class="msg has-header" id="msg-' + m.id + '"><div class="msg-avatar" style="background:' + u.color + ';color:#fff">' + m.username[0].toUpperCase() + '</div><div class="msg-content"><div class="msg-header"><span class="msg-author" style="color:' + u.color + '">' + m.username + '</span>' + badge + '<span class="msg-time">' + timeFull + '</span></div><div class="msg-text' + (m.flagged ? ' flagged' : '') + '">' + escHtml(m.text) + '</div>' + flagNote + '</div></div>';
+    }
+    lastUser = m.username;
+    lastTs = m.ts;
   });
-  if (!msgs.length) html = '<div class="empty-state"><div class="empty-icon">💬</div><div>No messages yet. Say hello!</div></div>';
-  const wasBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 80;
+  if (!msgs.length) {
+    html += '<div class="empty-state"><div class="empty-icon">&#x1F4AD;</div><div>No messages yet. Start the conversation!</div></div>';
+  }
+  var wasBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 80;
   area.innerHTML = html;
   if (wasBottom) area.scrollTop = area.scrollHeight;
 }
 
-function renderOnlineList() {
-  const list = document.getElementById('online-list');
-  const onlineArr = [...db.onlineUsers].slice(0, 8);
-  list.innerHTML = onlineArr.map(u => {
-    const user = db.users[u];
-    const color = user ? user.color : '#888';
-    return `<div class="online-user"><div class="ava" style="background:${color};color:#fff">${u[0].toUpperCase()}</div><span class="oname">${u}</span><div class="online-dot2"></div></div>`;
-  }).join('');
+function renderMemberList() {
+  var content = document.getElementById('member-list-content');
+  var onlineArr = Array.from(db.onlineUsers);
+  var allUsers = Object.keys(db.users).filter(function(u) { return u !== 'superadmin'; });
+  var offlineArr = allUsers.filter(function(u) { return !db.onlineUsers.has(u); });
+  var html = '';
+  if (onlineArr.length) {
+    html += '<div class="member-group-title">Online \u2014 ' + onlineArr.length + '</div>';
+    onlineArr.forEach(function(u) {
+      var user = db.users[u]; if (!user) return;
+      html += '<div class="member-item"><div class="m-avatar" style="background:' + user.color + ';color:#fff">' + u[0].toUpperCase() + '<div class="m-status online"></div></div><span class="m-name">' + u + '</span></div>';
+    });
+  }
+  if (offlineArr.length) {
+    html += '<div class="member-group-title">Offline \u2014 ' + offlineArr.length + '</div>';
+    offlineArr.forEach(function(u) {
+      var user = db.users[u]; if (!user) return;
+      html += '<div class="member-item"><div class="m-avatar" style="background:' + user.color + ';color:#fff;opacity:0.4">' + u[0].toUpperCase() + '<div class="m-status offline"></div></div><span class="m-name" style="opacity:0.4">' + u + '</span></div>';
+    });
+  }
+  content.innerHTML = html;
 }
 
 function updateInputState() {
-  const u = db.users[session.user];
-  const mutedBanner = document.getElementById('muted-banner');
-  const warnBanner = document.getElementById('warning-banner');
-  const input = document.getElementById('msg-input');
-  const btn = document.getElementById('send-btn');
+  var u = db.users[session.user];
+  var mutedBanner = document.getElementById('muted-banner');
+  var warnBanner = document.getElementById('warning-banner');
+  var input = document.getElementById('msg-input');
   if (!u) return;
   if (u.isBanned) { logout(); return; }
-  const muted = u.isMuted;
-  mutedBanner.style.display = muted ? 'flex' : 'none';
-  input.disabled = muted;
-  btn.disabled = muted;
-  if (!muted && u.warnings > 0) {
-    const msgs = [
-      '',
-      '⚠️ First warning: Watch your language. One more and you\'ll be muted.',
-      '⚠️ Final warning: Next violation will result in a mute.',
-      '⚠️ You have been automatically muted for repeated violations.',
-    ];
-    const w = Math.min(u.warnings, 3);
+  mutedBanner.style.display = u.isMuted ? 'flex' : 'none';
+  input.disabled = u.isMuted;
+  if (!u.isMuted && u.warnings > 0) {
+    var msgs = ['','First warning: Please be respectful in chat.','Final warning: Next violation will result in a mute.','You have been automatically muted.'];
+    var w = Math.min(u.warnings, 3);
     document.getElementById('warning-text').textContent = msgs[w];
-    warnBanner.style.display = w>0 ? 'flex' : 'none';
-  } else if (!muted) {
+    warnBanner.style.display = w > 0 ? 'flex' : 'none';
+  } else if (!u.isMuted) {
     warnBanner.style.display = 'none';
   }
 }
 
-// ═══════════════════════════════════════════════════
-// MESSAGING
-// ═══════════════════════════════════════════════════
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-}
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
 
 function filterText(text) {
-  let filtered = text;
-  let wasFlagged = false;
-  const lower = text.toLowerCase();
-  for (const word of PROFANITY) {
-    const re = new RegExp(`\\b${word}\\b`, 'gi');
+  if (!db.automod.profanityEnabled) return { filtered: text, wasFlagged: false };
+  var filtered = text;
+  var wasFlagged = false;
+  var lower = text.toLowerCase();
+  var allWords = PROFANITY.concat(db.automod.customWords);
+  for (var i = 0; i < allWords.length; i++) {
+    var word = allWords[i];
+    if (!word) continue;
+    var escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var re = new RegExp('\\b' + escaped + '\\b', 'gi');
     if (re.test(lower)) {
       wasFlagged = true;
-      filtered = filtered.replace(re, m => '*'.repeat(m.length));
+      filtered = filtered.replace(new RegExp('\\b' + escaped + '\\b', 'gi'), function(m) { return '\u2588'.repeat(m.length); });
     }
   }
-  return { filtered, wasFlagged };
+  return { filtered: filtered, wasFlagged: wasFlagged };
 }
 
 function sendMessage() {
-  const input = document.getElementById('msg-input');
-  const raw = input.value.trim();
+  var input = document.getElementById('msg-input');
+  var raw = input.value.trim();
   if (!raw) return;
-  const u = db.users[session.user];
+  var u = db.users[session.user];
   if (!u || u.isMuted || u.isBanned) return;
-
-  const { filtered, wasFlagged } = filterText(raw);
-
-  if (wasFlagged) {
+  var result = filterText(raw);
+  if (result.wasFlagged) {
     u.warnings++;
-    if (u.warnings >= 3) {
+    var threshold = db.automod.muteThreshold;
+    if (u.warnings >= threshold) {
       u.isMuted = true;
-      addLog('auto', 'System', session.user, 'Auto-muted after 3 profanity violations');
-      notify('🔇 You have been automatically muted for repeated profanity violations.', 'error', 6000);
+      addLog('auto', 'AutoMod', session.user, 'Auto-muted after ' + threshold + ' violations');
+      notify('You have been automatically muted for repeated violations.', 'error', 6000);
     } else {
-      addLog('auto', 'System', session.user, `Profanity warning issued (${u.warnings}/2)`);
-      notify(`⚠️ Warning ${u.warnings}/2: Your message contained filtered content.`, 'warn', 5000);
+      addLog('auto', 'AutoMod', session.user, 'Warning issued (' + u.warnings + '/' + (threshold-1) + ')');
+      notify('Warning ' + u.warnings + '/' + (threshold-1) + ': Your message contained filtered content.', 'warn', 5000);
     }
     updateInputState();
   }
-
-  db.messages.push({
-    id: db.nextId++,
-    username: session.user,
-    room: currentRoom,
-    text: filtered,
-    ts: Date.now(),
-    deleted: false,
-    flagged: wasFlagged,
-  });
-
+  db.messages.push({ id: db.nextId++, username: session.user, room: currentRoom, text: result.filtered, ts: Date.now(), deleted: false, flagged: result.wasFlagged });
   input.value = '';
   renderMessages();
 }
 
-// ═══════════════════════════════════════════════════
-// ADMIN PANEL
-// ═══════════════════════════════════════════════════
-function showAdminPanel() {
-  showView('admin-view');
-  adminTab('dashboard');
-}
-
-function exitAdmin() {
-  if (session.isAdmin) {
-    session.isAdmin = false;
-    db.onlineUsers.delete(session.user);
-    session.user = null;
-    showView('auth-view');
-    resetAdminSteps();
-  }
-}
+function showAdminPanel() { showView('admin-view'); adminTab('dashboard'); }
+function exitAdmin() { if (session.isAdmin) enterChat(session.user); }
 
 function adminTab(tab) {
-  document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-  event.currentTarget && event.currentTarget.classList.add('active');
-  document.getElementById(`panel-${tab}`).classList.add('active');
-  // highlight nav
-  document.querySelectorAll('.admin-nav-btn').forEach(b => {
-    if (b.textContent.toLowerCase().includes(tab.slice(0,4))) b.classList.add('active');
-  });
+  document.querySelectorAll('.admin-nav-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.admin-panel').forEach(function(p) { p.classList.remove('active'); });
+  if (event && event.currentTarget) event.currentTarget.classList.add('active');
+  var panel = document.getElementById('panel-' + tab);
+  if (panel) panel.classList.add('active');
   if (tab==='dashboard') renderDashboard();
   if (tab==='users') renderUsersTable();
   if (tab==='messages') renderMessagesTable();
   if (tab==='logs') renderLogs();
+  if (tab==='roles') renderRoles();
+  if (tab==='channels') renderChannels();
+  if (tab==='announcements') renderAnnouncements();
 }
 
 function renderDashboard() {
-  const users = Object.keys(db.users);
-  document.getElementById('stat-users').textContent = users.length;
-  document.getElementById('stat-messages').textContent = db.messages.filter(m=>!m.deleted).length;
-  document.getElementById('stat-flagged').textContent = db.messages.filter(m=>m.flagged&&!m.deleted).length;
-  document.getElementById('stat-banned').textContent = users.filter(u=>db.users[u].isBanned).length;
-  const logs = db.logs.slice(-5).reverse();
-  document.getElementById('dash-logs').innerHTML = logs.length ? logs.map(l => logHTML(l)).join('') : '<div class="empty-state" style="padding:20px"><div class="empty-icon">📋</div><div>No recent activity</div></div>';
+  document.getElementById('stat-users').textContent = Object.keys(db.users).length;
+  document.getElementById('stat-online').textContent = db.onlineUsers.size;
+  document.getElementById('stat-messages').textContent = db.messages.filter(function(m){return !m.deleted;}).length;
+  document.getElementById('stat-flagged').textContent = db.messages.filter(function(m){return m.flagged && !m.deleted;}).length;
+  var logs = db.logs.slice(-5).reverse();
+  document.getElementById('dash-logs').innerHTML = logs.length ? logs.map(logHTML).join('') : '<div class="empty-state" style="padding:20px"><div class="empty-icon">&#x1F4CB;</div><div>No recent activity</div></div>';
 }
 
 function logHTML(l) {
-  const icons = { admin:'⚡', ban:'🚫', unban:'✅', warn:'⚠️', mute:'🔇', unmute:'🔊', delete:'🗑️', auto:'🤖', system:'⚙️' };
-  const colors = { admin:'rgba(255,107,53,0.15)', ban:'rgba(248,81,73,0.12)', warn:'rgba(227,179,65,0.12)', delete:'rgba(248,81,73,0.12)', auto:'rgba(124,58,237,0.12)', system:'rgba(139,148,158,0.1)' };
-  const color = colors[l.type] || colors.system;
-  const icon = icons[l.type] || '⚙️';
-  const time = new Date(l.ts).toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  return `<div class="log-entry">
-    <div class="log-icon" style="background:${color}">${icon}</div>
-    <div>
-      <div class="log-time">${time}</div>
-      <div class="log-text"><strong>${l.by || 'System'}</strong> — ${l.action}${l.target?' on <strong>'+l.target+'</strong>':''}</div>
-    </div>
-  </div>`;
+  var icons = { admin:'\u26A1', ban:'\uD83D\uDEAB', unban:'\u2705', warn:'\u26A0\uFE0F', mute:'\uD83D\uDD07', unmute:'\uD83D\uDD0A', 'delete':'\uD83D\uDDD1\uFE0F', auto:'\uD83E\uDD16', system:'\u2699\uFE0F', announce:'\uD83D\uDCE2' };
+  var icon = icons[l.type] || '\u2699\uFE0F';
+  var time = new Date(l.ts).toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  return '<div class="log-entry"><div class="log-icon" style="background:var(--surface3)">' + icon + '</div><div><div class="log-time">' + time + '</div><div class="log-text"><strong>' + (l.by || 'System') + '</strong> \u2014 ' + l.action + (l.target ? ' on <strong>' + l.target + '</strong>' : '') + '</div></div></div>';
 }
 
 function renderUsersTable() {
-  const rows = Object.entries(db.users).filter(([u]) => u !== 'superadmin').map(([uname, u]) => {
-    const msgCount = db.messages.filter(m=>m.username===uname&&!m.deleted).length;
-    const status = u.isBanned ? '<span class="status-badge status-banned">Banned</span>' :
-                   u.isMuted  ? '<span class="status-badge status-muted">Muted</span>' :
-                   u.warnings >= 2 ? '<span class="status-badge status-warned">Warned</span>' :
-                   '<span class="status-badge status-ok">Active</span>';
-    const banBtn = u.isBanned
-      ? `<button class="act-btn act-unban" onclick="adminAction('unban','${uname}')">Unban</button>`
-      : `<button class="act-btn act-ban" onclick="adminAction('ban','${uname}')">Ban</button>`;
-    const muteBtn = u.isMuted
-      ? `<button class="act-btn act-unban" onclick="adminAction('unmute','${uname}')">Unmute</button>`
-      : `<button class="act-btn act-mute" onclick="adminAction('mute','${uname}')">Mute</button>`;
-    return `<tr>
-      <td><div style="display:flex;align-items:center;gap:8px"><div style="width:24px;height:24px;border-radius:50%;background:${u.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${uname[0].toUpperCase()}</div>${uname}</div></td>
-      <td>${status}</td>
-      <td><span style="color:${u.warnings>0?'var(--yellow)':'var(--text2)'}">${u.warnings}</span></td>
-      <td>${msgCount}</td>
-      <td>${u.joinDate}</td>
-      <td><div class="action-btns">
-        <button class="act-btn act-warn" onclick="adminAction('warn','${uname}')">Warn</button>
-        ${muteBtn}${banBtn}
-      </div></td>
-    </tr>`;
+  var rows = Object.entries(db.users).filter(function(e) { return e[0] !== 'superadmin'; }).map(function(e) {
+    var uname = e[0], u = e[1];
+    var msgCount = db.messages.filter(function(m){return m.username===uname && !m.deleted;}).length;
+    var status = u.isBanned ? '<span class="status-badge status-banned">Banned</span>' :
+                 u.isMuted  ? '<span class="status-badge status-muted">Muted</span>' :
+                 u.warnings >= 2 ? '<span class="status-badge status-warned">Warned</span>' :
+                 '<span class="status-badge status-ok">Active</span>';
+    var banBtn = u.isBanned
+      ? "<button class=\"act-btn act-unban\" onclick=\"adminAction('unban','" + uname + "')\">Unban</button>"
+      : "<button class=\"act-btn act-ban\" onclick=\"adminAction('ban','" + uname + "')\">Ban</button>";
+    var muteBtn = u.isMuted
+      ? "<button class=\"act-btn act-unban\" onclick=\"adminAction('unmute','" + uname + "')\">Unmute</button>"
+      : "<button class=\"act-btn act-mute\" onclick=\"adminAction('mute','" + uname + "')\">Mute</button>";
+    return '<tr><td><div style="display:flex;align-items:center;gap:8px"><div style="width:24px;height:24px;border-radius:50%;background:' + u.color + ';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">' + uname[0].toUpperCase() + '</div>' + uname + '</div></td><td>' + status + '</td><td><span style="color:' + (u.warnings>0?'var(--yellow)':'var(--text2)') + '">' + u.warnings + "</span></td><td>" + msgCount + "</td><td>" + u.joinDate + "</td><td><div class=\"action-btns\"><button class=\"act-btn act-warn\" onclick=\"adminAction('warn','" + uname + "')\">Warn</button>" + muteBtn + banBtn + '</div></td></tr>';
   });
-  document.getElementById('users-table').innerHTML = rows.join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">No users found</td></tr>';
+  document.getElementById('users-table').innerHTML = rows.join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">No members yet</td></tr>';
 }
 
 function renderMessagesTable() {
-  const msgs = [...db.messages].reverse().slice(0, 50);
-  const rows = msgs.map(m => {
-    const time = new Date(m.ts).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    const flag = m.flagged ? '<span style="color:var(--yellow)">⚠️ Profanity</span>' : '—';
-    const text = m.deleted ? '<em style="color:var(--text3)">Deleted</em>' : escHtml(m.text).slice(0,60) + (m.text.length>60?'…':'');
-    const delBtn = m.deleted ? '' : `<button class="act-btn act-del" onclick="adminDeleteMsg(${m.id})">Delete</button>`;
-    const u = db.users[m.username];
-    const color = u ? u.color : '#888';
-    return `<tr>
-      <td><span style="color:${color}">${m.username}</span></td>
-      <td>#${m.room}</td>
-      <td style="max-width:250px">${text}</td>
-      <td>${time}</td>
-      <td>${flag}</td>
-      <td>${delBtn}</td>
-    </tr>`;
+  var msgs = db.messages.slice().reverse().slice(0, 50);
+  var rows = msgs.map(function(m) {
+    var time = new Date(m.ts).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    var flag = m.flagged ? '<span style="color:var(--yellow)">Flagged</span>' : '\u2014';
+    var text = m.deleted ? '<em style="color:var(--text3)">Deleted</em>' : escHtml(m.text).slice(0,60) + (m.text.length>60?'\u2026':'');
+    var delBtn = m.deleted ? '' : '<button class="act-btn act-del" onclick="adminDeleteMsg(' + m.id + ')">Delete</button>';
+    var u = db.users[m.username];
+    var color = u ? u.color : '#888';
+    return '<tr><td><span style="color:' + color + '">' + m.username + '</span></td><td>#' + m.room + '</td><td style="max-width:250px">' + text + '</td><td>' + time + '</td><td>' + flag + '</td><td>' + delBtn + '</td></tr>';
   });
   document.getElementById('messages-table').innerHTML = rows.join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">No messages</td></tr>';
 }
 
 function renderLogs() {
-  const container = document.getElementById('activity-logs');
-  const logs = [...db.logs].reverse();
-  container.innerHTML = logs.length ? logs.map(l=>logHTML(l)).join('') : '<div class="empty-state"><div class="empty-icon">📋</div><div>No activity recorded</div></div>';
+  var logs = db.logs.slice().reverse();
+  document.getElementById('activity-logs').innerHTML = logs.length ? logs.map(logHTML).join('') : '<div class="empty-state"><div class="empty-icon">&#x1F4CB;</div><div>No activity recorded</div></div>';
 }
 
-// Admin actions
+function renderRoles() {
+  var html = '';
+  db.roles.forEach(function(r, i) {
+    var permsText = r.permissions.length ? r.permissions.join(', ') : 'No special permissions';
+    var delBtn = r.system ? '' : '<button class="act-btn act-del" onclick="deleteRole(' + i + ')">Delete</button>';
+    html += '<div class="admin-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span class="role-tag" style="background:' + r.color + '22;color:' + r.color + '">\u25CF ' + r.name + '</span>' + (r.system ? '<span style="font-size:12px;color:var(--text3)">System role</span>' : '') + '</div><div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Permissions: ' + permsText + '</div>' + delBtn + '</div>';
+  });
+  document.getElementById('roles-list').innerHTML = html;
+}
+
+function createRole() {
+  var name = document.getElementById('new-role-name').value.trim();
+  var color = document.getElementById('new-role-color').value.trim() || '#b5bac1';
+  if (!name) return notify('Please enter a role name.', 'error');
+  if (db.roles.find(function(r) { return r.name.toLowerCase() === name.toLowerCase(); })) return notify('A role with that name already exists.', 'error');
+  var permissions = [];
+  if (document.getElementById('role-perm-manage').checked) permissions.push('manage_messages');
+  if (document.getElementById('role-perm-kick').checked) permissions.push('kick');
+  if (document.getElementById('role-perm-ban').checked) permissions.push('ban');
+  if (document.getElementById('role-perm-admin').checked) permissions.push('admin');
+  db.roles.push({ name:name, color:color, permissions:permissions, system:false });
+  addLog('admin', session.user, null, 'Created role "' + name + '"');
+  document.getElementById('new-role-name').value = '';
+  document.getElementById('new-role-color').value = '';
+  ['role-perm-manage','role-perm-kick','role-perm-ban','role-perm-admin'].forEach(function(id) { document.getElementById(id).checked = false; });
+  renderRoles();
+  notify('Role "' + name + '" created!', 'success');
+}
+
+function deleteRole(idx) {
+  var role = db.roles[idx];
+  if (!role || role.system) return;
+  openModal('Delete Role', 'Delete the role <strong>' + role.name + '</strong>? This cannot be undone.', function() {
+    addLog('admin', session.user, null, 'Deleted role "' + role.name + '"');
+    db.roles.splice(idx, 1);
+    renderRoles();
+    notify('Role deleted.', 'info');
+  });
+}
+
+function renderChannels() {
+  var html = '';
+  Object.entries(ROOMS).forEach(function(e) {
+    var id = e[0], desc = e[1];
+    var msgCount = db.messages.filter(function(m) { return m.room === id && !m.deleted; }).length;
+    html += '<div class="admin-card" style="display:flex;align-items:center;gap:12px;"><span style="font-size:20px;color:var(--text3)">#</span><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">' + (id === 'offtopic' ? 'off-topic' : id) + '</div><div style="font-size:13px;color:var(--text-muted)">' + desc + '</div></div><span style="font-size:12px;color:var(--text3)">' + msgCount + " messages</span><button class=\"act-btn act-del\" onclick=\"deleteChannel('" + id + "')\">Delete</button></div>";
+  });
+  document.getElementById('channels-list').innerHTML = html;
+}
+
+function createChannel() {
+  var name = document.getElementById('new-channel-name').value.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-_]/g,'');
+  var topic = document.getElementById('new-channel-topic').value.trim() || 'No topic set';
+  if (!name) return notify('Please enter a channel name.', 'error');
+  if (name.length < 2) return notify('Channel name must be at least 2 characters.', 'error');
+  if (ROOMS[name]) return notify('A channel with that name already exists.', 'error');
+  ROOMS[name] = topic;
+  var roomsSection = document.querySelector('.rooms-section');
+  var btn = document.createElement('button');
+  btn.className = 'room-btn';
+  btn.id = 'room-' + name;
+  btn.onclick = function() { switchRoom(name); };
+  btn.innerHTML = '<span class="room-hash">#</span> ' + name;
+  roomsSection.appendChild(btn);
+  addLog('admin', session.user, null, 'Created channel #' + name);
+  document.getElementById('new-channel-name').value = '';
+  document.getElementById('new-channel-topic').value = '';
+  renderChannels();
+  notify('Channel #' + name + ' created!', 'success');
+}
+
+function deleteChannel(id) {
+  if (id === 'general') return notify('Cannot delete the #general channel.', 'error');
+  openModal('Delete Channel', 'Delete <strong>#' + id + '</strong> and all its messages? This cannot be undone.', function() {
+    delete ROOMS[id];
+    db.messages = db.messages.filter(function(m) { return m.room !== id; });
+    var btn = document.getElementById('room-' + id);
+    if (btn) btn.remove();
+    if (currentRoom === id) switchRoom('general');
+    addLog('admin', session.user, null, 'Deleted channel #' + id);
+    renderChannels();
+    notify('Channel #' + id + ' deleted.', 'info');
+  });
+}
+
+function renderAnnouncements() {
+  document.getElementById('announce-channel').innerHTML = Object.keys(ROOMS).map(function(r) { return '<option value="' + r + '">' + (r === 'offtopic' ? 'off-topic' : r) + '</option>'; }).join('');
+  var items = db.announcements.slice().reverse();
+  document.getElementById('announcements-log').innerHTML = items.length ? items.map(function(a) {
+    var time = new Date(a.ts).toLocaleString('en-US', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    return '<div class="log-entry"><div class="log-icon" style="background:var(--surface3)">\uD83D\uDCE2</div><div><div class="log-time">' + time + '</div><div class="log-text"><strong>' + a.by + '</strong> in #' + a.channel + ': ' + escHtml(a.text) + '</div></div></div>';
+  }).join('') : '<div class="empty-state" style="padding:20px">No announcements yet</div>';
+}
+
+function sendAnnouncement() {
+  var channel = document.getElementById('announce-channel').value;
+  var text = document.getElementById('announce-text').value.trim();
+  if (!text) return notify('Please enter an announcement message.', 'error');
+  db.messages.push({ id: db.nextId++, username: session.user, room: channel, text: '\uD83D\uDCE2 ANNOUNCEMENT \u2014 ' + text, ts: Date.now(), deleted: false, flagged: false });
+  db.announcements.push({ by: session.user, channel: channel, text: text, ts: Date.now() });
+  addLog('announce', session.user, null, 'Announcement in #' + channel);
+  document.getElementById('announce-text').value = '';
+  renderAnnouncements();
+  notify('Announcement sent to #' + channel + '!', 'success');
+}
+
+function saveServerSettings() {
+  var name = document.getElementById('server-name-input').value.trim();
+  var desc = document.getElementById('server-desc-input').value.trim();
+  if (!name) return notify('Server name cannot be empty.', 'error');
+  db.serverName = name;
+  db.serverDesc = desc;
+  document.querySelector('.sidebar-header').textContent = name;
+  addLog('admin', session.user, null, 'Updated server settings');
+  notify('Server settings saved!', 'success');
+}
+
+function toggleProfanityFilter() {
+  db.automod.profanityEnabled = document.getElementById('profanity-toggle').checked;
+  document.getElementById('profanity-status').textContent = db.automod.profanityEnabled ? 'Enabled' : 'Disabled';
+  addLog('admin', session.user, null, 'Profanity filter ' + (db.automod.profanityEnabled ? 'enabled' : 'disabled'));
+  notify('Profanity filter ' + (db.automod.profanityEnabled ? 'enabled' : 'disabled') + '.', 'info');
+}
+
+function saveAutoModSettings() {
+  var threshold = parseInt(document.getElementById('automute-threshold').value) || 3;
+  db.automod.muteThreshold = Math.max(1, Math.min(10, threshold));
+  document.getElementById('automute-threshold').value = db.automod.muteThreshold;
+  addLog('admin', session.user, null, 'Auto-mute threshold set to ' + db.automod.muteThreshold);
+  notify('AutoMod settings saved!', 'success');
+}
+
+function saveCustomWords() {
+  var text = document.getElementById('custom-words').value;
+  db.automod.customWords = text.split('\n').map(function(w) { return w.trim().toLowerCase(); }).filter(Boolean);
+  addLog('admin', session.user, null, 'Updated custom word filter (' + db.automod.customWords.length + ' words)');
+  notify('Custom filter updated with ' + db.automod.customWords.length + ' word(s).', 'success');
+}
+
 function adminAction(action, username) {
-  const u = db.users[username];
+  var u = db.users[username];
   if (!u) return;
-  const titles = { warn:'Issue Warning', mute:'Mute User', unmute:'Unmute User', ban:'Ban User', unban:'Unban User' };
-  const bodies = {
-    warn:`Issue an official warning to <strong>${username}</strong>? They currently have ${u.warnings} warning(s).`,
-    mute:`Mute <strong>${username}</strong>? They won't be able to send messages.`,
-    unmute:`Unmute <strong>${username}</strong>?`,
-    ban:`Permanently ban <strong>${username}</strong>? They will be unable to log in.`,
-    unban:`Unban <strong>${username}</strong>? They will regain access to the platform.`,
+  var titles = { warn:'Issue Warning', mute:'Mute Member', unmute:'Unmute Member', ban:'Ban Member', unban:'Unban Member' };
+  var bodies = {
+    warn:'Issue a warning to <strong>' + username + '</strong>? They currently have ' + u.warnings + ' warning(s).',
+    mute:'Mute <strong>' + username + '</strong>? They will not be able to send messages.',
+    unmute:'Unmute <strong>' + username + '</strong>?',
+    ban:'Ban <strong>' + username + '</strong> from the server? They will be unable to log in.',
+    unban:'Unban <strong>' + username + '</strong>? They will regain access.',
   };
-  openModal(titles[action], bodies[action], () => {
-    if (action==='warn')   { u.warnings++; }
-    if (action==='mute')   { u.isMuted = true; }
-    if (action==='unmute') { u.isMuted = false; }
+  openModal(titles[action], bodies[action], function() {
+    if (action==='warn')   u.warnings++;
+    if (action==='mute')   u.isMuted = true;
+    if (action==='unmute') u.isMuted = false;
     if (action==='ban')    { u.isBanned = true; db.onlineUsers.delete(username); }
-    if (action==='unban')  { u.isBanned = false; }
-    addLog(action, 'superadmin', username, `Admin ${action}`);
+    if (action==='unban')  u.isBanned = false;
+    addLog(action, session.user, username, action.charAt(0).toUpperCase() + action.slice(1));
     renderUsersTable();
-    notify(`✅ Action "${action}" applied to ${username}`, 'success');
+    notify(action.charAt(0).toUpperCase() + action.slice(1) + ' applied to ' + username, 'success');
   });
 }
 
 function adminDeleteMsg(id) {
-  openModal('Delete Message', 'Permanently delete this message? This cannot be undone.', () => {
-    const m = db.messages.find(x=>x.id===id);
-    if (m) { m.deleted = true; m.text = '[Deleted by admin]'; }
-    addLog('delete', 'superadmin', null, `Deleted message #${id}`);
+  openModal('Delete Message', 'Delete this message? This cannot be undone.', function() {
+    var m = db.messages.find(function(x){return x.id===id;});
+    if (m) { m.deleted = true; m.text = '[Message deleted]'; }
+    addLog('delete', session.user, null, 'Deleted message #' + id);
     renderMessagesTable();
-    notify('🗑️ Message deleted', 'info');
+    notify('Message deleted', 'info');
   });
 }
 
-// ═══════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════
 function addLog(type, by, target, action) {
-  db.logs.push({ type, by, target, action, ts: Date.now() });
+  db.logs.push({ type:type, by:by, target:target, action:action, ts: Date.now() });
   if (db.logs.length > 200) db.logs.shift();
 }
 
@@ -1079,15 +1250,17 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function notify(msg, type='info', duration=3500) {
-  const el = document.createElement('div');
-  el.className = `notif notif-${type}`;
+function notify(msg, type, duration) {
+  type = type || 'info';
+  duration = duration || 3500;
+  var el = document.createElement('div');
+  el.className = 'notif notif-' + type;
   el.textContent = msg;
   document.body.appendChild(el);
-  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity 0.3s'; setTimeout(()=>el.remove(), 300); }, duration);
+  setTimeout(function() { el.style.opacity='0'; el.style.transition='opacity 0.3s'; setTimeout(function(){el.remove();}, 300); }, duration);
 }
 
-let modalCallback = null;
+var modalCallback = null;
 function openModal(title, body, cb) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-body').innerHTML = body;
@@ -1098,32 +1271,17 @@ function closeModal() {
   document.getElementById('modal').classList.remove('open');
   modalCallback = null;
 }
-document.getElementById('modal-confirm').onclick = () => {
-  closeModal();
+document.getElementById('modal-confirm').onclick = function() {
   if (modalCallback) modalCallback();
+  closeModal();
 };
 
-// ─── Keyboard shortcuts ───
-document.addEventListener('keydown', e => {
-  if (e.key==='Escape') closeModal();
-});
+document.addEventListener('keydown', function(e) { if (e.key==='Escape') closeModal(); });
 
-// ─── Populate some demo online users ───
-['alice','carol'].forEach(u => db.onlineUsers.add(u));
-
-// ─── Admin nav click fix ───
-document.querySelectorAll('.admin-nav-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-  });
-});
-
-// ─── Enter key on admin auth inputs ───
-['admin-key','admin-user','admin-pass','admin-code'].forEach(id => {
-  const el = document.getElementById(id);
+['admin-key','admin-user','admin-pass','admin-code'].forEach(function(id) {
+  var el = document.getElementById(id);
   if (!el) return;
-  el.addEventListener('keydown', e => {
+  el.addEventListener('keydown', function(e) {
     if (e.key !== 'Enter') return;
     if (id==='admin-key') adminStep1();
     else if (id==='admin-user'||id==='admin-pass') adminStep2();
@@ -1131,9 +1289,12 @@ document.querySelectorAll('.admin-nav-btn').forEach(btn => {
   });
 });
 
-['login-user','login-pass'].forEach(id => {
-  document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+['login-user','login-pass'].forEach(function(id) {
+  document.getElementById(id).addEventListener('keydown', function(e) { if(e.key==='Enter') doLogin(); });
 });
+
+// Initialize superadmin account
+db.users['superadmin'] = { password:'Nx@2024!', role:'admin', warnings:0, isBanned:false, isMuted:false, joinDate:'2024-01-01', color:'#5865f2' };
 </script>
 </body>
 </html>
